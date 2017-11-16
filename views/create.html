@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Create</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/list.css">
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-6 col-xs-offset-3 text-center">
+            <h1>create a Song</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2 text-center">
+            <form action="/create" method="POST" enctype="multipart/form-data">
+                File Name : <input type="text" name="fileName"><br>
+                Song : <textarea type="text" name="song">[["C4",1,0.3,0.3],["C3",1,0.3,0.3]]</textarea><br>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

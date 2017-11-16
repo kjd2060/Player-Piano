@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Current files</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/list.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row heading-row">
+            <div class="col-xs-6 col-xs-offset-3 text-center">
+                <h1>Select a Song</h1>
+            </div>
+            <div class-"col-xs-3 text-right upload-btn" type="button" data-toggle="modal" data-target="#myModal">
+                <h1><span class="glyphicon glyphicon-upload" aria-hidden="true"></span></h1>
+            </div>
+        </div>
+        {{#files}}
+        <div class="row song-listing">
+            <div class="col-xs-8 col-xs-offset-2 text-center">
+                <a href="/song?fn={{.}}">{{.}}</a>
+            </div>
+        </div>
+        {{/files}}
+    </div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Upload a new file</h4>
+            </div>
+            <div class="modal-body">
+                <input name="midiFile" type="file" accept="audio/midi">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

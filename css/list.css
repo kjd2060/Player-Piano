@@ -1,0 +1,39 @@
+/*************************************************************************/
+/* General page style */
+/*************************************************************************/
+
+html {
+    height: 100%;
+}
+
+body {
+	height: 100%;
+	margin: 0;
+    margin-top: 5%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+	font-family: “Helvetica Neue”, Helvetica, Arial, sans-serif;
+	background: -webkit-linear-gradient(top, #a8edea, #fed6e3);
+	background: linear-gradient(to bottom, #a8edea, #fed6e3);
+}
+
+
+h1 {
+	color: #614385;
+	font-weight: 800;
+    font-size: 6vmin;
+}
+
+.song-listing {
+    font-size: 3.5vmin;
+    margin-top: 1%
+}
+
+.upload-btn {
+    margin-top: 25px;
+    cursor: pointer;
+}
+
+.heading-row {
+    margin-bottom: 3%;
+}

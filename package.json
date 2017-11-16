@@ -1,0 +1,24 @@
+{
+  "name": "Player-Piano",
+  "version": "1.0.0",
+  "description": "testing the parsing of MIDI files through npm extentions",
+  "main": "webapp.js",
+  "scripts": {
+    "start": "node webapp.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Samraaj Singh",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "express-fileupload": "0.0.5",
+    "midiconvert": "^0.4.0",
+    "mustache": "^2.2.1",
+    "mustache-express": "^1.2.2",
+    "serialport": "^4.0.7"
+  },
+  "engines": {
+    "node": "4.5.0"
+  }
+}
