@@ -47,74 +47,7 @@ var buffer430 = [];
 
 function initialize(callback) {
 
-	console.log('\nOpening serial ports...\n');
-	try{
-	var createPort = function(id) {
-		var p = new SerialPort('/dev/ttyACM'+ id, {
-			baudRate: 9600
-		});
-		p.on('open', function() {
-
-			console.log('Port to ttyACM' + id + ' is open');
-			console.log('Ŕequesting ID from ttyACM' + id + '...');
-
-			p.on('data', function(data) {
-
-				// Ignore this handler if serial connection is already established
-				if (portLeft && portRight) {
-					return;
-				}
-
-				var idString = '';
-
-				for (var i = 0; i < data.length; i++) {
-					if (data[i] == 248) {}
-					else if (data[i] == 48) idString = 'timer';
-					else if (data[i] == 49) idString = 'left';
-					else if (data[i] == 50) idString = 'right';	
-					
-					console.log('recieved data from port identify - ' + data[i]);
-				}
-
-				if (idString == '') console.log('ttyACM' + id + ' could not be identified');
-				else {
-					console.log('ttyACM' + id + ' is ' + idString + ' controller');
-					if (idString == 'left') portLeft = p;
-					else if (idString == 'right') portRight = p;
-					else if (idString == 'timer') {
-						port430 = p;
-						// on arrival of timer, create the other controllers
-						createPort(1);
-						createPort(3);
-					}
-				}
-
-			});
-
-			// Request the ID from the MSP on this port
-			p.write('?');
-
-		});
-	};
-
-	// Invoke the above function for each microcontroller
-	// NOTE: Each microcontroller adds TWO ttyACM* to /dev/
-	// Connect to the lower of the pair (i.e. 0 for first, 2 for second...)
-	//for (var i = 0; i < 5; i++)
-	//	createPort(i);
-	
-	createPort(0);
-
-	// Now wait for all the ports to be recognized
-	onPortsReady(callback);
-	}
-	catch(err){
-		// something went wrong, launch the callback anyways though
-		// this should log whatever error and then start the server anyways.  This is for testing
-		// running the server w/o breaking when there is no uc
-		console.log(err);
-		callback();
-	}
+	callback();
 
 }
 

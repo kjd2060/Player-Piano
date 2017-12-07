@@ -13,13 +13,14 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
 	font-family: “Helvetica Neue”, Helvetica, Arial, sans-serif;
-	background: -webkit-linear-gradient(top, #a8edea, #fed6e3);
-	background: linear-gradient(to bottom, #a8edea, #fed6e3);
+	/*background: -webkit-linear-gradient(top, #a8edea, #fed6e3);
+	background: linear-gradient(to bottom, #a8edea, #fed6e3);*/
+	background-color: #fafafa
 }
 
 
 h1 {
-	color: #614385;
+	/*color: #614385;*/
 	font-weight: 800;
     font-size: 6vmin;
 }
@@ -36,4 +37,8 @@ h1 {
 
 .heading-row {
     margin-bottom: 3%;
+}
+
+a{
+	color: #000000
 }
