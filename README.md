@@ -17,7 +17,7 @@ node index.js
 
 This should start the server.  If you get an error saying something about pianoserial or serialport, run the following command
 
-npn install serialport
+npm install serialport
 
 This should install the serialport module to the write place in the folder.  Run the following command
 
