@@ -73,6 +73,7 @@ function createMidi(noteArray) {
 function parseMidiJSON(midiJSON) {
     var totalNotes = 0;
     var convertedNotes = [];
+
     for (var i in midiJSON.tracks) {
         for (var j in midiJSON.tracks[i].notes) {
             totalNotes++;
@@ -111,6 +112,10 @@ function parseMidiJSON(midiJSON) {
         totalNotes : totalNotes
     };
 
+}
+
+function getEndTime(midiJSON){
+    
 }
 
 function parseMidiJSONComplex(midiJSON, configuration) {

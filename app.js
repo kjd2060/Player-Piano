@@ -34,7 +34,7 @@ app.get('/', function(req, res) {
 			temp = temp.replace(/_/gi, ' ');
 			copy.push(temp.replace(/.mid/i, ''));
 			songs.push({SongName: copy[index], FileName: file});
-			console.log(copy[index], file);
+			//console.log(copy[index], file);
 		});
 		// delay until strings prettyfied
 		files = copy;
@@ -77,6 +77,7 @@ app.post('/create', function(req, res) {
 
 });
 
+var dur;
 // View a song's raw output from processing (for admin usage)
 app.get('/view', function(req, res) {
     var filePath = 'midifiles/' + req.query.fn;
@@ -85,17 +86,19 @@ app.get('/view', function(req, res) {
 		return obj.SongName == req.query.fn;
 	});
 	
-	console.log(result);
+	//console.log(result);
 	
     // Read the specified file from the file directory
     fs.readFile(filePath, 'binary', function(err, midiStr) {
         if (!err) {
             // convert midi to json
             var midiJSON = midiProcessor.convertToJSON(midiStr);
-	    console.log('midi json:');
-	    console.log(JSON.stringify(midiJSON));
+	   // console.log('midi json:');
+	   // console.log(JSON.stringify(midiJSON));
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
+
+
 
             res.send(JSON.stringify(song));
 
@@ -118,12 +121,12 @@ app.get('/song', function(req, res) {
 	filePath = filePrefix + result[0].FileName;
 	
 	// debugging stuff in case of weirdness
-	console.log(result);
-	console.log(result[0]); // the above returns an array so we need to get the 0'th element, 
+	//console.log(result);
+	//console.log(result[0]); // the above returns an array so we need to get the 0'th element, 
 	// since duplicates would mean duplicate filenames and we'll assume they want the first one
 	temp = result[0];
-	console.log(temp.SongName);
-	console.log(temp.FileName);
+	//console.log(temp.SongName);
+	//console.log(temp.FileName);
 	
     // Read the specified file from the file directory
     fs.readFile(filePath, 'binary', function(err, midiStr) {
@@ -132,10 +135,13 @@ app.get('/song', function(req, res) {
             var midiJSON = midiProcessor.convertToJSON(midiStr);
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
+            dur = midiJSON.duration;
            /* console.log('json processed:');
             console.log(JSON.stringify(midiJSON));
             console.log('song processed:');
             console.log(JSON.stringify(song));*/
+    		//console.log("duration: " + dur + ", in m-s: " + (Math.floor(dur/60)) + "m " + ((dur % 1)*60).toFixed(2) + "s");
+
 			if(pianoConnected){
 				console.log("piano connected");
 				// load the song on to the piano
@@ -146,7 +152,8 @@ app.get('/song', function(req, res) {
 				});
 			}
 			else{
-				res.render('playsong.html', {fn:req.query.fn, fileName: filePath});
+				var durStr = ""+(Math.floor(dur/60)) + ":" + ((dur % 1)*60).toFixed(0);
+				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr});
 			}
 
         } else {
