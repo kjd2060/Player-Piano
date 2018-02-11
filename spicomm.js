@@ -86,9 +86,9 @@ function setDac(keyAddress,value){
     var spiCmd = ((localKey % module_size) << adc_cmd.adcSelectShift) | (value << 2);
 	var spiCmdBuffer = new Buffer([(spiCmd & 0xff00) >> 8,spiCmd & 0xff]);
 	// set enable of target module high, write it, disable
-    rpio.write(board_enables[moduleAddress], rpio.HIGH);
-    rpio.spiWrite(spiCmdBuffer, spiCmdBuffer.length);
     rpio.write(board_enables[moduleAddress], rpio.LOW);
+    rpio.spiWrite(spiCmdBuffer, spiCmdBuffer.length);
+    rpio.write(board_enables[moduleAddress], rpio.HIGH);
 }
 function setKeyEnables(note_array){
     // currently expecting an array of notes (midi numbered) that should be enabled on this following cycle.
