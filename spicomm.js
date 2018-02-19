@@ -29,12 +29,11 @@ var rpio = require('rpio');
 //  11- 31
 //          * Pin 24 & 26 must be set using the spi interface (spiChipSelect(0/1/2)), not standard GPIO
 //          ** RCLK is a fairly "special case" signal, so it may be the appropriate use of (otherwise unusable) CE1.
-const board_enables = [-1,11,12,13,15,16,18,22,27,28,29];  // index this by board address, base 1; address 0 is invalid
-const shiftreg_rclk = 26;
-const modules_connected = 6;
+const board_enables = [-1,11,12,13,15,16,18,22,27,28,29,31];  // index this by board address, base 1; address 0 is invalid
+const modules_connected = 2;
 const module_size = 8;
 const module_base = 0; // this is the position of our lowest solenoid
-const adc_cmd = {
+const adc_cmd = {  // includes DAC opcodes in case we need them
     "adcSelectShift":12,
     "dataReset":0xE000,
     "dataCtrlReset":0xF000
@@ -59,6 +58,16 @@ function initSpi() {
     }
 
 	// rpio.spiChipSelect(0); // we probably don't need this
+}
+
+function finishSpi() {
+    // disable SPI mode, set GPIO low on relevant pins, turn off all solemoids
+    setKeyEnables([]);
+    for (var x=1; x <= modules_connected; x++){
+        rpio.write(board_enables[x], rpio.LOW);
+        rpio.close(board_enables[x]);
+    }
+    rpio.spiEnd();
 }
 
 function rclkRisingEdge() {
@@ -90,13 +99,47 @@ function setDac(keyAddress,value){
     rpio.spiWrite(spiCmdBuffer, spiCmdBuffer.length);
     rpio.write(board_enables[moduleAddress], rpio.HIGH);
 }
+
+function velocityToDac(key,velocity,calMap){
+    // maps the velocity value from MIDI to a 10-bit value we write to the DAC
+    // TODO: finalize which velocity format to use (general MIDI 0 to 128, or tonejs 0 to 1)
+    var dacvalue;
+
+}
+
+function transmitState(stateDB, currentTime){
+    // TODO: implement the pseudocode in Drive
+
+}
+
+function genCalMap(){
+    // this function should be edited to calibrate the volumes of keys with different weights
+    // procedure for this will likely be plotting velocity/measured loudness in excel and fitting an equation
+
+    // set this to 1 if even midi-numbered notes will be played with the heavier (extended) plungers
+    const evenNotesHeavy = 0;
+
+    var calMap = new Array(modules_connected*module_size);
+    // populate the map with coefficients that will multiply (or possibly add?) the DAC value
+    for (var i=0;i< calMap.length;i++){
+        if (i%2 !== evenNotesHeavy){
+            // equation for heavier, extended solenoid plungers
+            calMap[i]= 1;
+        }
+        else {
+            // equation for lighter, top-rail solenoid plungers
+            calMap[i]= 1;
+        }
+    }
+}
+
 function setKeyEnables(note_array){
     // currently expecting an array of notes (midi numbered) that should be enabled on this following cycle.
     var i;
     var localKey = 0;   // used for "key - base"
 
     // allocate 1 byte per module, initialized to zero.
-    var enableBitstream = [];  //new Array(modules_connected);
+    var enableBitstream = [];  //new Array(modules_connected); enableBitstream.fill(0);
     for (i=0;i<modules_connected;i++) enableBitstream[i]=0;
 
     // iterate through the notes that need to be on, set bits that will be transmitted
@@ -118,20 +161,3 @@ function setKeyEnables(note_array){
     rclkRisingEdge();
 }
 
-function spiTest(){
-    // main test loop
-    initSpi();
-    var a = new Array(47);
-    while(1) {
-        // just write velocity (ADC) commands repeatedly, with a zero-write in between to clarify
-        var test_velocity = 900; // 0b1110000100 in 10 bits; spans both bytes to verify bit packing/masking
-        for (var i = 1; i < 48; i++) { //pretend we're writing to 6 modules
-            setDac(i, i * 5);
-            //a[i-1]=i;
-        }
-        setKeyEnables([0,2,4,6,8,10,12,14,16,18,20,47]);
-        //setKeyEnables([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,23,47]);
-        //setKeyEnables(a);
-    }
-}
-spiTest();
