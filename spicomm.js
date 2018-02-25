@@ -6,7 +6,7 @@ var rpio = require('rpio');
 // Pin mapping (physical, not BCOM):
 //
 // Shift Register (parallel data push)
-//  RCLK:  26   **
+//  RCLK:  7
 //
 // SPI
 //  MOSI: 19
@@ -30,7 +30,8 @@ var rpio = require('rpio');
 //          * Pin 24 & 26 must be set using the spi interface (spiChipSelect(0/1/2)), not standard GPIO
 //          ** RCLK is a fairly "special case" signal, so it may be the appropriate use of (otherwise unusable) CE1.
 const board_enables = [-1,11,12,13,15,16,18,22,27,28,29,31];  // index this by board address, base 1; address 0 is invalid
-const modules_connected = 2;
+const modules_connected = 1;
+const shiftreg_rclk = 7;
 const module_size = 8;
 const module_base = 0; // this is the position of our lowest solenoid
 const adc_cmd = {  // includes DAC opcodes in case we need them
@@ -39,7 +40,7 @@ const adc_cmd = {  // includes DAC opcodes in case we need them
     "dataCtrlReset":0xF000
 };
 
-function initSpi() {
+exports.initSpi = function () {
     var initsettings = {
         gpiomem:false,
         mapping:'physical'  // use hardware pin numbering, not BCM
@@ -49,18 +50,19 @@ function initSpi() {
     rpio.spiBegin();
     // DAC chips are the slowest limit, at 30MHZ; we need to divide our clock down to 25MHz at most (10)
     // Currently operating at 2MHz just to be safe, with plenty of headroom if we need to speed up to meet our req.
-    rpio.spiSetClockDivider(126);
+    rpio.spiSetClockDivider(1260); //126 for 2MHz; we're slowing down 10x for initial debugging
     // set GPIO output mode on each enable pin used
     for (var x=1; x <= modules_connected; x++){
         rpio.open(board_enables[x], rpio.OUTPUT);
         // active low, initialize to every board off
         rpio.write(board_enables[x], rpio.HIGH);
     }
+    // open GPIO pin for RCLK
+    rpio.open(shiftreg_rclk,rpio.OUTPUT);
+    // rpio.spiChipSelect(0); // we only need this if we return to using SPI CE pins as RCLK, also need to consider setCSPolarity()
+};
 
-	// rpio.spiChipSelect(0); // we probably don't need this
-}
-
-function finishSpi() {
+exports.finishSpi = function() {
     // disable SPI mode, set GPIO low on relevant pins, turn off all solemoids
     setKeyEnables([]);
     for (var x=1; x <= modules_connected; x++){
@@ -68,19 +70,21 @@ function finishSpi() {
         rpio.close(board_enables[x]);
     }
     rpio.spiEnd();
-}
+};
 
 function rclkRisingEdge() {
     // Set RCLK 0 to 1, pushing data in serial registers to output registers
-    rpio.spiChipSelect(0);
+    //rpio.spiChipSelect(0);
+    rpio.write(shiftreg_rclk, rpio.HIGH);
 }
 
 function rclkFallingEdge() {
     // Set RCLK 1 to 0, pushing data in serial registers to output registers
-    rpio.spiChipSelect(1); // CE0 selected,
+    //rpio.spiChipSelect(1); // CE0 selected,
+    rpio.write(shiftreg_rclk, rpio.LOW);
 }
 
-function setDac(keyAddress,value){
+exports.setDac = function (keyAddress,value){
     // keyAddress is midi value of the note
     var localKey = keyAddress-module_base;
     if ((localKey > module_size * modules_connected) || (keyAddress < module_base)){
@@ -98,7 +102,7 @@ function setDac(keyAddress,value){
     rpio.write(board_enables[moduleAddress], rpio.LOW);
     rpio.spiWrite(spiCmdBuffer, spiCmdBuffer.length);
     rpio.write(board_enables[moduleAddress], rpio.HIGH);
-}
+};
 
 function velocityToDac(key,velocity,calMap){
     // maps the velocity value from MIDI to a 10-bit value we write to the DAC
@@ -133,7 +137,7 @@ function genCalMap(){
     }
 }
 
-function setKeyEnables(note_array){
+exports.setKeyEnables = function (note_array) {
     // currently expecting an array of notes (midi numbered) that should be enabled on this following cycle.
     var i;
     var localKey = 0;   // used for "key - base"
@@ -159,5 +163,5 @@ function setKeyEnables(note_array){
     rpio.spiWrite(keyEnableBuffer, keyEnableBuffer.length);
     // enables sent, push data to output
     rclkRisingEdge();
-}
-
+    rclkFallingEdge();
+};
