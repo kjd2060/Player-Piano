@@ -3,6 +3,7 @@ var fileUpload = require('express-fileupload');
 var mustacheExpress = require('mustache-express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
+var database = require('./database');
 
 var songs = [];
 var pianoConnected = false;
@@ -138,6 +139,9 @@ app.get('/song', function(req, res) {
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
+
+            database.addSong("test", midiJSON);
+            database.printSong("test");
            /* console.log('json processed:');
             console.log(JSON.stringify(midiJSON));
             console.log('song processed:');
