@@ -10,45 +10,14 @@ module.exports = {
 };
 
 var rpio = require('rpio');
+var gc = require("globalConstants");
 
-// Pin mapping (physical, not BCOM):
-// http://edge.rit.edu/edge/P18363/public/ElectricalDesignDocuments/pi_pinout.png
-//
-// Shift Register (parallel data push)
-//  RCLK:  15   **
-//
-// SPI
-//  MOSI: 19
-//  MISO: 21
-//  SCLK: 23
-//  CE0 : 24    *
-//  CE1 : 26    *
-// Board Enables:
-//  1-  11
-//  2-  12
-//  3-  13
-//  4-  15 //TODO: ??????
-//  5-  16
-//  6-  18
-//
-//  7-  22
-//  8-  27
-//  9-  28
-//  10- 29
-//  11- 31
-//          * Pin 24 & 26 must be set using the spi interface (spiChipSelect(0/1/2)), not standard GPIO
-//          ** RCLK is a fairly "special case" signal, so it may be the appropriate use of (otherwise unusable) CE1.
-const board_enables = [-1,11,12,13,15,16,18,22,27,28,29,31];  // index this by board address, base 1; address 0 is invalid
-const modules_connected = 1;
-const shiftreg_rclk = 15;
-const module_size = 8;
-const module_base = 0; // this is the position of our lowest solenoid
-const adc_cmd = {  // includes DAC opcodes in case we need them
-    "adcSelectShift":12,
-    "dataReset":0xE000,
-    "dataCtrlReset":0xF000
-};
-const solenoid_on_time_limit = 8; // seconds that the solenoid is allowed to be active for
+const board_enables = gc.board_enables;  // index this by board address, base 1; address 0 is invalid
+const modules_connected = gc.modules_connected;
+const shiftreg_rclk = gc.shiftreg_rclk;
+const module_size = gc.module_size;
+const module_base = gc.module_base; // this is the position of our lowest solenoid
+const adc_cmd = gc.adc_cmd;
 
 function initSpi() {
     var initsettings = {

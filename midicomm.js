@@ -7,9 +7,10 @@ module.exports = {
 };
 var spi = require("./spicomm");
 var pedal = require("./pedalcomm");
-var loki = require("lokijs");
+var Loki = require("lokijs");
+var gc = require("globalConstants");
 
-const solenoid_on_time_limit = 8; // seconds that the solenoid is allowed to be active for
+const solenoid_on_time_limit = gc.solenoid_on_time_limit; // seconds the solenoid is allowed to be active for
 
 /** maps the velocity value from MIDI to a 10-bit value we write to the DAC
  * @param noteObj -
@@ -27,13 +28,12 @@ function velocityToDac(noteObj){
 
 /**
  * Communicates the state of the piano keys (on/off, velocity) to the hardware
- * @param {Loki} stateDB - database containing the relation of the piano hardware state
+ * @param {Loki} db - database containing the relation of the piano hardware state
  * @param {float} currentTime
  */
-function transmitState(stateDB, currentTime){
-    // TODO: Work with Kevin & get the names right
+function transmitState(db, currentTime){
     //Obtain the keys that should be on
-    var pianoState = stateDB.getCollection("pianostate").getDynamicView("activeKeys").data();
+    var pianoState = db.getCollection("pianoState").getDynamicView("activeKeys").data();
     var notesToEnable = [];
     var key = null;
     for (var i = 0;i<pianoState.length;i++){ // for each key on the piano:
@@ -54,5 +54,14 @@ function transmitState(stateDB, currentTime){
     }
     // write to the shift register chain
     spi.setKeyEnables(notesToEnable);
+
+}
+
+function playSong(db, userBPM){
+    var currentSong=db.getDynamicView("songView").branchResultSet();
+    const baseBPM = currentSong.bpm;
+    var intervalResolution = gc.minimum_cycle_duration_ms;
+    var currentNotes = currentSong.find();
+
 
 }
