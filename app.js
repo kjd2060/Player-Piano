@@ -138,8 +138,8 @@ app.get('/song', function(req, res) {
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
 
-            database.addSong("test", midiJSON);
-            database.printSong("test");
+            database.addSong(result[0].SongName, midiJSON);
+            database.printSong(result[0].SongName);
            /* console.log('json processed:');
             console.log(JSON.stringify(midiJSON));
             console.log('song processed:');
