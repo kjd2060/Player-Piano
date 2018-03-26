@@ -2,21 +2,35 @@ module.exports = {
 
 	addSong : addSong,
 	printSong : printSong,
-	removeSong : removeSong
+	removeSong : removeSong,
+	getDB: getDB
 
 };
 
 var loki = require('lokijs');
+var gc = require("./globalConstants");
+
+const midiStart = gc.module_base; // lowest midi value that our piano can play
+const numSupportedKeys = gc.modules_connected*gc.module_size;
 
 var db = new loki("loki.json");
 var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
+var pianoState = db.addCollection("pianoState");
 var views = [];
 
 /*
  * EXPORTED FUNCTIONS
 */
+
+/**
+ * make the database instance accessible to other functions
+ */
+function getDB(){
+    return db;
+}
+
 function addSong(songName, parsedMidi){
 	if(parsedMidi.isPercussion)
 	{
@@ -59,28 +73,22 @@ function removeSong(songName){
 
 }
 
-/*
- * INTERNAL FUNCTIONS
-*/
-
-/*
-module.exports = function(){
-	var db = new loki('loki.json');
-
-	 var doctors = db.addCollection('doctors');
-
-	 doctors.insert({name:'David Tennent', doctorNumber: 10});
-	 doctors.insert({name:'Matt Smith', doctorNumber:11});
-
-	 doctors.insert({name:'Paul McGann', doctorNumber:8});
-	 doctors.insert({name:'Peter Capaldi', doctorNumber:12});
-	 
-	 // console.log(doctors.data);
-
-	 var view = doctors.addDynamicView("newerDoctors");
-	 view.applyWhere(function(obj) { return obj.doctorNumber > 8});
-	 view.applySimpleSort('doctorNumber', true); // 'true' marks an optional parameter for sorting in descending order; defaults to false.
-
-	 console.log(view.data());
-
-};*/
+/**
+ * sets up the conditions of the piano hardware state
+ * @param {loki} db
+ */
+function initPianoState(db) {
+    var pianoState = db.getCollection("pianoState");
+    var activeKeysView = pianoState.addDynamicView("activeKeys");
+    // var calMap = genCalMap();
+    for (var i=midiStart;i<numSupportedKeys;i++){
+        pianoState.insert({
+            keyNumber:i,
+            velocityValue:100,
+            velocityPrevious:-1,
+            noteOn:false,
+            weightCal:0 //calMap[i]
+        });
+    }
+    activeKeysView.applyFind({"noteOn":true});
+}
