@@ -4,6 +4,7 @@ var mustacheExpress = require('mustache-express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var database = require('./database');
+var midi = require("./midicomm");
 
 var songs = [];
 var pianoConnected = false;
@@ -177,9 +178,10 @@ app.post('/start', function(req, res) {
 	tempo = 10;
     }
     var tempoChar = String.fromCharCode(32 + Number(tempo));
-    piano.play(tempoChar, function() {
-        res.send('success');
-    });
+    // piano.play(tempoChar, function() {
+    //     res.send('success');
+    // });
+    midi.playSong(database.getDB(),96,0);
 });
 
 app.post('/pause', function(req, res) {
