@@ -19,8 +19,8 @@ from time import sleep
 
 debug = False
 default_freq = 1600
-extend_time_sec  = 0.500
-retract_time_sec = 0.500
+extend_time_sec  = 0.750
+retract_time_sec = 0.750
 
 
 # register the parameters of each pedal actuator channel here.
@@ -39,8 +39,8 @@ actuators = {
         "channels":[3]  
         }
     }
-	# Useage example, if another HAT or more channels are needed:
-	# "heavy": {
+    # Useage example, if another HAT or more channels are needed:
+    # "heavy": {
     #     "address": 0x61,    # second board, solder jumper A0
     #     "channels":[3,4]    # two motor channels, wired in parallel
     #     },
@@ -52,9 +52,9 @@ class LinearActuator:
         self.name = name
 
         for chan in channels:
-		    c = self._motor_hat.getMotor(chan)
-			# motor will not run unless speed is explicitly set
-			c.setSpeed(speed)  # 0 to 255
+            c = self._motor_hat.getMotor(chan)
+            # motor will not run unless speed is explicitly set
+            c.setSpeed(speed)  # 0 to 255
             self._channels.append(c)
             
     def stopActuator(self):
