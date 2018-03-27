@@ -38,7 +38,7 @@ function transmitState(db, currentTime){
     var pianoState = db.getCollection("pianoState").getDynamicView("activeKeys").data();
     var notesToEnable = [];
     var key = null;
-    for (var i = 0;i<pianoState.length;i++){ // for each key on the piano:
+    for (var i = 0;i<pianoState.keys().length;i++){ // for each key on the piano:
         key = pianoState[i];
         // if the note's velocity changed, write to the DAC
         if (key.velocityValue !== key.velocityPrevious){
@@ -60,7 +60,7 @@ function transmitState(db, currentTime){
 }
 
 function playSong(db, userBPM, startTime){
-    var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultSet();
+    var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
     var pianoState = db.getCollection("pianoState");
     const baseBPM = currentSong.bpm;
     // determine our timing resolution based on smallest time unit in the track (pulse)
@@ -83,7 +83,7 @@ function playSong(db, userBPM, startTime){
         // find all notes that should be on
         currentNotes = currentSong.find({ $and:[
                 {time:{$lte:songTime}},
-                {time:{$gt:songTime+duration}} //TODO: this is sketchy; perhaps we store endTime instead of duration?
+                {time:{$gt:songTime+"this.duration"}} //TODO: this is sketchy; perhaps we store endTime instead of duration?
             ]}).data();
         for (note in currentNotes){
             key = pianoState.find({midi:note.keyNumber});
