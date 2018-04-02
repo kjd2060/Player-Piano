@@ -85,7 +85,7 @@ app.get('/view', function(req, res) {
     var filePath = 'midifiles/' + req.query.fn;
 	
 	var result = songs.filter(function( obj ) {
-		return obj.SongName == req.query.fn;
+		return obj.SongName === req.query.fn;
 	});
 	
 	//console.log(result);
@@ -96,7 +96,7 @@ app.get('/view', function(req, res) {
             // convert midi to json
             var midiJSON = midiProcessor.convertToJSON(midiStr);
 	   // console.log('midi json:');
-	   // console.log(JSON.stringify(midiJSON));
+	   console.log(JSON.stringify(midiJSON));
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
 
@@ -117,10 +117,10 @@ app.get('/song', function(req, res) {
     var filePath = filePrefix + req.query.fn;
 
 	var result = songs.filter(function( obj ) {
-		return obj.SongName == req.query.fn;
+		return obj.SongName === req.query.fn;
 	});
-	
-	filePath = filePrefix + result[0].FileName;
+	var filename = result[0].FileName;
+	filePath = filePrefix + filename;
 	
 	// debugging stuff in case of weirdness
 	//console.log(result);
@@ -139,9 +139,10 @@ app.get('/song', function(req, res) {
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
 
-            database.addSong("test", midiJSON);
-            database.printSong("test");
-           /* console.log('json processed:');
+            database.addSong(filename, midiJSON);
+            database.printSong(filename);
+            database.initPianoState();
+            /* console.log('json processed:');
             console.log(JSON.stringify(midiJSON));
             console.log('song processed:');
             console.log(JSON.stringify(song));*/
