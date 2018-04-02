@@ -8,7 +8,8 @@ module.exports = {
 };
 var spi = require("./spicomm");
 var pedal = require("./pedalcomm");
-var Loki = require("lokijs");
+var Loki = require("lokijs"); //TODO: extract my queries and put them in database.js, remove this import
+var database = require("./database");
 var gc = require("./globalConstants");
 
 const solenoid_on_time_limit = gc.solenoid_on_time_limit; // seconds the solenoid is allowed to be active for
@@ -20,8 +21,8 @@ const minimum_cycle_duration = gc.minimum_cycle_duration_ms;
 function velocityToDac(noteObj){
     const dacMin = 0;
     const dacMax = 1023;
-    const velocityMin = 0;
-    const velocityMax = 1;
+    // const velocityMin = 0;
+    // const velocityMax = 1;
     // map velocity to DAC, taking into account that key's weight calibration value
     return dacMin + ((dacMax - dacMin)*noteObj.velocityValue) + noteObj.weightCal; // simplified, premature optimization :^)
     //return dacMin + ((dacMax - dacMin)/(velocityMax- velocityMin))*(noteObj.velocity_value - velocityMin) + noteObj.weightCal; // proper way if velocity scale changes
@@ -35,7 +36,9 @@ function velocityToDac(noteObj){
  */
 function transmitState(db, currentTime){
     //Obtain the keys that should be on
-    var pianoState = db.getCollection("pianoState").getDynamicView("activeKeys").data();
+    var pianoState = db.getCollection("pianoState");
+    var dview=pianoState.getDynamicView("activeKeys");
+    pianoState = dview.data();
     var notesToEnable = [];
     var key = null;
     for (var i = 0;i<pianoState.keys().length;i++){ // for each key on the piano:
@@ -61,13 +64,14 @@ function transmitState(db, currentTime){
 
 function playSong(db, userBPM, startTime){
     var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
+    var currentSongData = currentSong.data()[0];
+    var currentSongNotes = database.getSongNotes(currentSongData.name);
     var pianoState = db.getCollection("pianoState");
-    const baseBPM = currentSong.bpm;
     // determine our timing resolution based on smallest time unit in the track (pulse)
     //   query this amount of time in the midi data (in seconds):
-    var midiInterval = currentSong.bpm * currentSong.PPQ / 60;
+    var midiInterval = 60 / (currentSongData.bpm * currentSongData.PPQ);
     //   this is the real time duration of a pulse (in milliseconds):
-    var timerInterval = midiInterval * currentSong.bpm / userBPM * 1000;
+    var timerInterval = midiInterval * currentSongData.bpm / userBPM * 1000;
 
     // if we try to update faster than our spec allows, slow it down by half
     while (timerInterval < minimum_cycle_duration){
@@ -80,11 +84,12 @@ function playSong(db, userBPM, startTime){
     var currentNotes,key,note;
 
     var playLoop = setInterval(function(){
+        console.log(songTime);
         // find all notes that should be on
-        currentNotes = currentSong.find({ $and:[
+        currentNotes = currentSongNotes.find(
                 {time:{$lte:songTime}},
-                {time:{$gt:songTime+"this.duration"}} //TODO: this is sketchy; perhaps we store endTime instead of duration?
-            ]}).data();
+                {time:{$gt:songTime+"this.duration"}}
+            ).data();
         for (note in currentNotes){
             key = pianoState.find({midi:note.keyNumber});
             key.onTime = songTime;
@@ -97,7 +102,7 @@ function playSong(db, userBPM, startTime){
         // increment timer to the next pulse
         songTime += midiInterval;
 
-        if(songTime > currentSong.duration){
+        if(songTime > currentSongData.duration){ //TODO: also implement a "stop/pause" flag and check it here
             // song is over, turn off keys and quit looping
             spi.setKeyEnables([]);
             clearInterval(playLoop);
