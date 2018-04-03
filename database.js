@@ -30,7 +30,7 @@ function addSong(songName, parsedMidi){
 						instrumentFamily : tempTracks[i].instrumentFamily, instrument : tempTracks[i].instrument });
 
 		for(var j in tempTracks[i].notes){
-			notes.insert({trackID : tempTracks[i].id, midi : tempTracks[i].notes[j].midi, time : tempTracks[i].notes[j].time, note : tempTracks[i].notes[j].note, 
+			notes.insert({song:songName, trackID : tempTracks[i].id, midi : tempTracks[i].notes[j].midi, time : tempTracks[i].notes[j].time, note : tempTracks[i].notes[j].note, 
 						velocity : tempTracks[i].notes[j].velocity, duration : tempTracks[i].notes[j].duration });
 		}
 	}

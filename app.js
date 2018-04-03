@@ -100,7 +100,6 @@ app.get('/view', function(req, res) {
             var song = processorResult.simpleArray;
 
 
-
             res.send(JSON.stringify(song));
 
         } else {

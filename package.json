@@ -1,6 +1,6 @@
 {
   "name": "Player-Piano",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "testing the parsing of MIDI files through npm extentions",
   "main": "webapp.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "express-fileupload": "0.0.5",
+    "lokijs": "^1.5.3",
     "midiconvert": "^0.4.0",
     "mustache": "^2.2.1",
     "mustache-express": "^1.2.2",
