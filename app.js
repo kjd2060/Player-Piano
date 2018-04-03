@@ -18,6 +18,7 @@ app.use(fileUpload());
 app.use('/js', express.static('js'));
 app.use('/bootstrap', express.static('bootstrap'));
 app.use('/css', express.static('css'));
+app.use('/images', express.static('images'));
 
 // Register and configure templating engine for front end (mustache)
 app.engine('html', mustacheExpress());
