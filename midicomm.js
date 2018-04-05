@@ -35,14 +35,12 @@ function velocityToDac(noteObj){
  * @param {number} currentTime
  */
 function transmitState(db, currentTime){
-    //Obtain the keys that should be on
-    var pianoState = db.getCollection("pianoState");
-    var dview=pianoState.getDynamicView("activeKeys");
-    pianoState = dview.data();
+    // Obtain the keys that should be on
+    var pianoActiveState = db.getCollection("pianoState").find({noteOn:true});
     var notesToEnable = [];
     var key = null;
-    for (var i = 0;i<pianoState.keys().length;i++){ // for each key on the piano:
-        key = pianoState[i];
+    for (var k in pianoActiveState){ // for each key on the piano:
+        key = pianoActiveState[k];
         // if the note's velocity changed, write to the DAC
         if (key.velocityValue !== key.velocityPrevious){
             spi.setDac(key.keyNumber,velocityToDac(key));
@@ -65,8 +63,8 @@ function transmitState(db, currentTime){
 function playSong(db, userBPM, startTime){
     var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
     var currentSongData = currentSong.data()[0];
-    var currentSongNotes = database.getSongNotes(currentSongData.name);
     var pianoState = db.getCollection("pianoState");
+    spi.initSpi();
     // determine our timing resolution based on smallest time unit in the track (pulse)
     //   query this amount of time in the midi data (in seconds):
     var midiInterval = 60 / (currentSongData.bpm * currentSongData.PPQ);
@@ -86,15 +84,20 @@ function playSong(db, userBPM, startTime){
     var playLoop = setInterval(function(){
         console.log(songTime);
         // find all notes that should be on
-        currentNotes = currentSongNotes.find(
-                {time:{$lte:songTime}},
-                {time:{$gt:songTime+"this.duration"}}
-            ).data();
-        for (note in currentNotes){
-            key = pianoState.find({midi:note.keyNumber});
-            key.onTime = songTime;
+        currentNotes = database.getSongNotes(currentSongData.name).find({
+            $and:[
+                {time: {$lte: songTime}},
+                {end:{$gt:songTime}}
+        ]}).data();
+        for (var n in currentNotes){
+            note = currentNotes[n];
+            key = pianoState.findOne({keyNumber:note.midi});
+            // update key status
             key.noteOn = true;
+            key.onTime = songTime; //TODO: this doesn't work as expected, it's set to the latest time regardless
             key.velocityValue = note.velocity;
+            // ensure the changes are reflected in the state db
+            pianoState.update(key);
         }
         // state is updated, now sync the hardware to it
         transmitState(db,songTime);
@@ -109,4 +112,5 @@ function playSong(db, userBPM, startTime){
         }
     }, timerInterval);
     //TODO: integrate pedal control in this loop
+    spi.finishSpi();
 }
