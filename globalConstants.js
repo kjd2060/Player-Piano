@@ -15,7 +15,7 @@ module.exports = {
     // Control PCB Properties
     modules_connected : 1,
     module_size : 8,
-    module_base : 0, // this is the position of our lowest solenoid (will be 37 (C#2/Db2) with our 48-key implementation)
+    module_base : 57, // this is the position of our lowest solenoid (will be 37 (C#2/Db2) with our 48-key implementation)
     adc_cmd : {  // includes DAC opcodes in case we need them
         "adcSelectShift":12,
         "dataReset":0xE000,

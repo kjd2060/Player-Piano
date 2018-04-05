@@ -10,7 +10,7 @@ module.exports = {
 };
 
 var rpio = require('rpio');
-var gc = require("globalConstants");
+var gc = require("./globalConstants");
 
 const board_enables = gc.board_enables;  // index this by board address, base 1; address 0 is invalid
 const modules_connected = gc.modules_connected;

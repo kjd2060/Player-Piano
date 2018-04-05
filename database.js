@@ -57,7 +57,8 @@ function addSong(songName, parsedMidi){
 				time : tempTracks[i].notes[j].time,
 				note : tempTracks[i].notes[j].note,
 				velocity : tempTracks[i].notes[j].velocity,
-				duration : tempTracks[i].notes[j].duration });
+				duration : tempTracks[i].notes[j].duration,
+				end : tempTracks[i].notes[j].time + tempTracks[i].notes[j].duration });
 		}
 	}
 
@@ -81,31 +82,27 @@ function addSong(songName, parsedMidi){
 }
 
 function printSong(songName){
-	views["songView"].applyFind({'name': songName}, "unique");	// we only want one filter at a time,
+	views["songView"].applyFind({'name': songName}, "songName");	// we only want one filter at a time,
+																// give it a static ID so it will be replaced
+	views["songNotes"].applyFind({name: songName}, "songName");	// we only want one filter at a time,
 																// give it a static ID so it will be replaced
 	console.log(views["songView"].data());
 }
 
 function getSongNotes(songName) {
-	// var trackview = views["tracksView"].branchResultset();
+	// Obtain the tracks we care about, harvest their ID numbers
+	// TODO: update this to only select the tracks we want
 	var allTracks = tracks.find({"song":songName});
 	var idArray = [];
-
 	for (var t in allTracks){
 		idArray.push(allTracks[t].id);
 	}
-	// grab notes that are in our selected tracks
-	// views["songNotes"].applyFind({
-	var toss = notes.find({
-		'song': songName,
-        'trackID':{"$in":idArray}
-	});
-	var songNotes = views["songNotes"].applyFind({
-		// 'song': songName,
-		'trackID':{"$in":idArray}
-	}, "unique"); // we only want one filter at a time, give it a static ID so subsequent calls replace it
 
-	return songNotes.branchResultset();
+	// grab notes that are in our selected tracks
+	return notes.chain().find({ // returns a Resultset for further queries
+		song: songName,
+		trackID:{$in : idArray}
+	});
 }
 
 function removeSong(songName){
