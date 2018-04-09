@@ -45,7 +45,7 @@ function initSpi() {
  * turn off all solenoids, disable SPI mode, set GPIO low on relevant pins
  */
 function finishSpi() {
-    exports.setKeyEnables([]);
+    setKeyEnables([]);
     for (var x=1; x <= modules_connected; x++){
         rpio.write(board_enables[x], rpio.LOW);
         rpio.close(board_enables[x]);
