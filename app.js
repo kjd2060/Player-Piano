@@ -30,8 +30,10 @@ app.get('/', function(req, res) {
     // Get list of file names and pass to front end
     fs.readdir('midifiles/', function(err, files) {
 		files.forEach(function(file, index){
-			temp = file.replace(/-/gi, ' ');
-			temp = temp.replace(/_/gi, ' ');
+		    // preserve intentional hyphens, e.g. 'artist - title'
+			temp = file.replace(/[ _]-[ _]/gi, ' ^ ');
+			temp = temp.replace(/[-_]/gi, ' ');
+			temp = temp.replace(/\^/gi, '-');
 			copy.push(temp.replace(/.mid/i, ''));
 			songs.push({SongName: copy[index], FileName: file});
 			//console.log(copy[index], file);
