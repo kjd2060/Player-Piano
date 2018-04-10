@@ -160,6 +160,9 @@ app.get('/song', function(req, res) {
 				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr});
 			}
 
+            var tracks = database.getTrackView();
+            
+
         } else {
             // Failed to read the .midi file, throw error
             res.status(500).send(err);

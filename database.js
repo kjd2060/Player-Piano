@@ -2,7 +2,10 @@ module.exports = {
 
 	addSong : addSong,
 	printSong : printSong,
-	removeSong : removeSong
+	removeSong : removeSong,
+	getSongView : getSongView,
+	getTrackView : getTrackView,
+	getNotesView : getNotesView
 
 };
 
@@ -59,6 +62,18 @@ function removeSong(songName){
 
 }
 
+
+function getSongView(){
+	return views["songView"];
+}
+
+function getTrackView(){
+	return views["trackView"];
+}
+
+function getNotesView(){
+	return views["notesVIew"];
+}
 /*
  * INTERNAL FUNCTIONS
 */
