@@ -4,6 +4,10 @@ var mustacheExpress = require('mustache-express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var database = require('./database');
+<<<<<<< HEAD
+=======
+var midi = require("./midicomm");
+>>>>>>> master
 
 var songs = [];
 var pianoConnected = false;
@@ -32,8 +36,10 @@ app.get('/', function(req, res) {
     // Get list of file names and pass to front end
     fs.readdir('midifiles/', function(err, files) {
 		files.forEach(function(file, index){
-			temp = file.replace(/-/gi, ' ');
-			temp = temp.replace(/_/gi, ' ');
+		    // preserve intentional hyphens, e.g. 'artist - title'
+			temp = file.replace(/[ _]-[ _]/gi, ' ^ ');
+			temp = temp.replace(/[-_]/gi, ' ');
+			temp = temp.replace(/\^/gi, '-');
 			copy.push(temp.replace(/.mid/i, ''));
 			songs.push({SongName: copy[index], FileName: file});
 			//console.log(copy[index], file);
@@ -85,7 +91,7 @@ app.get('/view', function(req, res) {
     var filePath = 'midifiles/' + req.query.fn;
 	
 	var result = songs.filter(function( obj ) {
-		return obj.SongName == req.query.fn;
+		return obj.SongName === req.query.fn;
 	});
 	
 	//console.log(result);
@@ -96,7 +102,7 @@ app.get('/view', function(req, res) {
             // convert midi to json
             var midiJSON = midiProcessor.convertToJSON(midiStr);
 	   // console.log('midi json:');
-	   // console.log(JSON.stringify(midiJSON));
+	   console.log(JSON.stringify(midiJSON));
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
 
@@ -116,10 +122,10 @@ app.get('/song', function(req, res) {
     var filePath = filePrefix + req.query.fn;
 
 	var result = songs.filter(function( obj ) {
-		return obj.SongName == req.query.fn;
+		return obj.SongName === req.query.fn;
 	});
-	
-	filePath = filePrefix + result[0].FileName;
+	var filename = result[0].FileName;
+	filePath = filePrefix + filename;
 	
 	// debugging stuff in case of weirdness
 	//console.log(result);
@@ -138,9 +144,16 @@ app.get('/song', function(req, res) {
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
 
+<<<<<<< HEAD
             database.addSong(result[0].SongName, midiJSON);
             database.printSong(result[0].SongName);
            /* console.log('json processed:');
+=======
+            database.addSong(filename, midiJSON);
+            database.printSong(filename);
+            database.initPianoState();
+            /* console.log('json processed:');
+>>>>>>> master
             console.log(JSON.stringify(midiJSON));
             console.log('song processed:');
             console.log(JSON.stringify(song));*/
@@ -178,9 +191,10 @@ app.post('/start', function(req, res) {
 	tempo = 10;
     }
     var tempoChar = String.fromCharCode(32 + Number(tempo));
-    piano.play(tempoChar, function() {
-        res.send('success');
-    });
+    // piano.play(tempoChar, function() {
+    //     res.send('success');
+    // });
+    midi.playSong(database.getDB(),96,0);
 });
 
 app.post('/pause', function(req, res) {
