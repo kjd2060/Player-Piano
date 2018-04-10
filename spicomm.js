@@ -77,7 +77,7 @@ function rclkFallingEdge() {
 function setDac(keyAddress,value){
     var localKey = keyAddress-module_base;
     if ((localKey > module_size * modules_connected) || (keyAddress < module_base)){
-        throw "Error: key ({0}) out of range".format(keyAddress);
+        throw "Error: key "+keyAddress+" out of range";
     }
     if (value > 1023 || value < 0){
         throw "Error: invalid DAC value";
@@ -139,7 +139,7 @@ function setKeyEnables(noteArray) {
         localKey = noteArray[i] - module_base;
         //console.log(localKey);
         if ((localKey > module_size * modules_connected) || (noteArray[i] < module_base)){
-            throw "Error: key ({0}) out of range".format(noteArray[i]);
+            throw "Error: key "+noteArray[i]+" out of range";
         }
         // set the bit; our shift register chain receives the highest note first (and we transmit MSB first)
         enableBitstream[modules_connected-1-(Math.floor(localKey/8))] |= 1 << localKey%8; // 8 is just byte size here, no magic.
