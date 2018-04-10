@@ -16,7 +16,7 @@
     "lokijs": "^1.5.3",
     "midiconvert": "^0.4.1",
     "mustache": "^2.3.0",
-    "mustache-express": "^1.2.4",
+    "mustache-express": "^1.2.4"
   },
   "engines": {
     "node": "4.5.0"

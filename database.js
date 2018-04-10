@@ -5,16 +5,15 @@ module.exports = {
 	removeSong : removeSong,
 	getSongView : getSongView,
 	getTrackView : getTrackView,
-	getNotesView : getNotesView
+	getNotesView : getNotesView,
+	getDB: getDB,
+    initPianoState: initPianoState,
+    getSongNotes: getSongNotes
 
 };
 
 var loki = require('lokijs');
-	getDB: getDB,
-    initPianoState: initPianoState,
-    getSongNotes: getSongNotes
-};
-
+	
 var loki = require('lokijs');
 var gc = require("./globalConstants");
 
@@ -90,9 +89,9 @@ function addSong(songName, parsedMidi){
 }
 
 function printSong(songName){
-	views["songView"].applyFind({'name': songName});
+	views["songView"].applyFind({'name': songName}, "printSongFind");
 	console.log(views["songView"].data());
-	
+	views["songView"].removeFilter("printSongFind");
 }
 
 function removeSong(songName){
