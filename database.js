@@ -3,6 +3,13 @@ module.exports = {
 	addSong : addSong,
 	printSong : printSong,
 	removeSong : removeSong,
+	getSongView : getSongView,
+	getTrackView : getTrackView,
+	getNotesView : getNotesView
+
+};
+
+var loki = require('lokijs');
 	getDB: getDB,
     initPianoState: initPianoState,
     getSongNotes: getSongNotes
@@ -18,6 +25,7 @@ var db = new loki("loki.json");
 var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
+
 var pianoState = db.addCollection("pianoState");
 var views = [];
 
@@ -62,7 +70,6 @@ function addSong(songName, parsedMidi){
 		}
 	}
 
-
 	songs.insert({
 		name:songName,
 		bpm : header.bpm,
@@ -77,17 +84,58 @@ function addSong(songName, parsedMidi){
 	views["songView"] = songView;
 	views["tracksView"] = tracksView;
 	views["songNotes"] = songNotes;
+
 	console.log(tracks);
 	console.log(notes);
 }
 
 function printSong(songName){
-	views["songView"].applyFind({'name': songName}, "songName");	// we only want one filter at a time,
-																// give it a static ID so it will be replaced
-	views["songNotes"].applyFind({name: songName}, "songName");	// we only want one filter at a time,
-																// give it a static ID so it will be replaced
+	views["songView"].applyFind({'name': songName});
 	console.log(views["songView"].data());
+	
 }
+
+function removeSong(songName){
+
+}
+
+
+function getSongView(){
+	return views["songView"];
+}
+
+function getTrackView(){
+	return views["trackView"];
+}
+
+function getNotesView(){
+	return views["notesVIew"];
+}
+/*
+ * INTERNAL FUNCTIONS
+*/
+
+/*
+module.exports = function(){
+	var db = new loki('loki.json');
+
+	 var doctors = db.addCollection('doctors');
+
+	 doctors.insert({name:'David Tennent', doctorNumber: 10});
+	 doctors.insert({name:'Matt Smith', doctorNumber:11});
+
+	 doctors.insert({name:'Paul McGann', doctorNumber:8});
+	 doctors.insert({name:'Peter Capaldi', doctorNumber:12});
+	 
+	 // console.log(doctors.data);
+
+	 var view = doctors.addDynamicView("newerDoctors");
+	 view.applyWhere(function(obj) { return obj.doctorNumber > 8});
+	 view.applySimpleSort('doctorNumber', true); // 'true' marks an optional parameter for sorting in descending order; defaults to false.
+
+	 console.log(view.data());
+
+};*/
 
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers

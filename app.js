@@ -4,6 +4,7 @@ var mustacheExpress = require('mustache-express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var database = require('./database');
+
 var midi = require("./midicomm");
 
 var songs = [];
@@ -19,6 +20,7 @@ app.use(fileUpload());
 app.use('/js', express.static('js'));
 app.use('/bootstrap', express.static('bootstrap'));
 app.use('/css', express.static('css'));
+app.use('/images', express.static('images'));
 
 // Register and configure templating engine for front end (mustache)
 app.engine('html', mustacheExpress());
@@ -103,7 +105,6 @@ app.get('/view', function(req, res) {
             var song = processorResult.simpleArray;
 
 
-
             res.send(JSON.stringify(song));
 
         } else {
@@ -141,10 +142,15 @@ app.get('/song', function(req, res) {
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
 
+            database.addSong(result[0].SongName, midiJSON);
+            database.printSong(result[0].SongName);
+           /* console.log('json processed:');
+=======
             database.addSong(filename, midiJSON);
             database.printSong(filename);
             database.initPianoState();
             /* console.log('json processed:');
+>>>>>>> master
             console.log(JSON.stringify(midiJSON));
             console.log('song processed:');
             console.log(JSON.stringify(song));*/
@@ -163,6 +169,9 @@ app.get('/song', function(req, res) {
 				var durStr = ""+(Math.floor(dur/60)) + ":" + ((dur % 1)*60).toFixed(0);
 				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr});
 			}
+
+            var tracks = database.getTrackView();
+            
 
         } else {
             // Failed to read the .midi file, throw error

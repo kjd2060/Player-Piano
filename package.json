@@ -1,22 +1,22 @@
 {
   "name": "Player-Piano",
-  "version": "1.0.0",
-  "description": "testing the parsing of MIDI files through npm extentions",
-  "main": "webapp.js",
+  "version": "2.0.0",
+  "description": "Controller and server for an automated piano",
+  "main": "index.js",
   "scripts": {
-    "start": "node webapp.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Samraaj Singh",
+  "author": "Samraaj Singh - v1, Edward Maskelony and Kevin Davison - v2",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
     "express-fileupload": "0.0.5",
-    "midiconvert": "^0.4.0",
-    "mustache": "^2.2.1",
-    "mustache-express": "^1.2.2",
-    "serialport": "^4.0.7"
+    "lokijs": "^1.5.3",
+    "midiconvert": "^0.4.1",
+    "mustache": "^2.3.0",
+    "mustache-express": "^1.2.4",
   },
   "engines": {
     "node": "4.5.0"
