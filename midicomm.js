@@ -82,7 +82,6 @@ function playSong(db, userBPM, startTime){
     var currentNotes,key,note;
 
     var playLoop = setInterval(function(){
-        console.log(songTime);
         // find all notes that should be on
         currentNotes = database.getSongNotes(currentSongData.name).find({
             $and:[
@@ -109,8 +108,8 @@ function playSong(db, userBPM, startTime){
             // song is over, turn off keys and quit looping
             spi.setKeyEnables([]);
             clearInterval(playLoop);
+            spi.finishSpi();
         }
     }, timerInterval);
     //TODO: integrate pedal control in this loop
-    spi.finishSpi();
 }
