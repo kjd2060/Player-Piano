@@ -92,11 +92,13 @@ function playSong(db, userBPM, startTime){
             note = currentNotes[n];
             key = pianoState.findOne({keyNumber:note.midi});
             // update key status
-            key.noteOn = true;
-            key.onTime = songTime; //TODO: this doesn't work as expected, it's set to the latest time regardless
-            key.velocityValue = note.velocity;
-            // ensure the changes are reflected in the state db
-            pianoState.update(key);
+            if (key !== null) {  // protect against out-of-range notes w/ no corresponding key
+                key.noteOn = true;
+                key.onTime = songTime; //TODO: this doesn't work as expected, it's set to the latest time regardless
+                key.velocityValue = note.velocity;
+                // ensure the changes are reflected in the state db
+                pianoState.update(key);
+            }
         }
         // state is updated, now sync the hardware to it
         transmitState(db,songTime);
