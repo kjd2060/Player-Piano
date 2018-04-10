@@ -4,10 +4,8 @@ var mustacheExpress = require('mustache-express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var database = require('./database');
-<<<<<<< HEAD
-=======
+
 var midi = require("./midicomm");
->>>>>>> master
 
 var songs = [];
 var pianoConnected = false;
@@ -144,7 +142,6 @@ app.get('/song', function(req, res) {
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
 
-<<<<<<< HEAD
             database.addSong(result[0].SongName, midiJSON);
             database.printSong(result[0].SongName);
            /* console.log('json processed:');

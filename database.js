@@ -3,7 +3,6 @@ module.exports = {
 	addSong : addSong,
 	printSong : printSong,
 	removeSong : removeSong,
-<<<<<<< HEAD
 	getSongView : getSongView,
 	getTrackView : getTrackView,
 	getNotesView : getNotesView
@@ -11,7 +10,6 @@ module.exports = {
 };
 
 var loki = require('lokijs');
-=======
 	getDB: getDB,
     initPianoState: initPianoState,
     getSongNotes: getSongNotes
@@ -22,23 +20,18 @@ var gc = require("./globalConstants");
 
 const midiStart = gc.module_base; // lowest midi value that our piano can play
 const numSupportedKeys = gc.modules_connected*gc.module_size;
->>>>>>> master
 
 var db = new loki("loki.json");
 var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
-<<<<<<< HEAD
-=======
+
 var pianoState = db.addCollection("pianoState");
->>>>>>> master
 var views = [];
 
 /*
  * EXPORTED FUNCTIONS
 */
-<<<<<<< HEAD
-=======
 
 /**
  * make the database instance accessible to other functions
@@ -47,7 +40,6 @@ function getDB(){
     return db;
 }
 
->>>>>>> master
 function addSong(songName, parsedMidi){
 	if(parsedMidi.isPercussion)
 	{
@@ -57,14 +49,6 @@ function addSong(songName, parsedMidi){
 	var header = parsedMidi.header;
 	var tempTracks = parsedMidi.tracks;
 	for(var i in tempTracks){
-<<<<<<< HEAD
-		tracks.insert({song:songName, id : tempTracks[i].id, name : tempTracks[i].name, instrumentNumber : tempTracks[i].instrumentNumber, 
-						instrumentFamily : tempTracks[i].instrumentFamily, instrument : tempTracks[i].instrument });
-
-		for(var j in tempTracks[i].notes){
-			notes.insert({song:songName, trackID : tempTracks[i].id, midi : tempTracks[i].notes[j].midi, time : tempTracks[i].notes[j].time, note : tempTracks[i].notes[j].note, 
-						velocity : tempTracks[i].notes[j].velocity, duration : tempTracks[i].notes[j].duration });
-=======
 		tracks.insert({
 			song:songName,
 			id : tempTracks[i].id,
@@ -83,23 +67,9 @@ function addSong(songName, parsedMidi){
 				velocity : tempTracks[i].notes[j].velocity,
 				duration : tempTracks[i].notes[j].duration,
 				end : tempTracks[i].notes[j].time + tempTracks[i].notes[j].duration });
->>>>>>> master
 		}
 	}
 
-
-<<<<<<< HEAD
-	songs.insert({name:songName, bpm : header.bpm, timeSignature : header.timeSignature, PPQ : header.PPQ, 
-					startTime :  parsedMidi.startTime, duration : parsedMidi.duration });
-
-
-	var songView = songs.addDynamicView("songView");
-	var tracksView = songs.addDynamicView("tracksView");
-	var notesView = songs.addDynamicView("notesView");
-	views["songView"] = songView;
-	views["tracksView"] = tracksView;
-	views["notesView"] = notesView;
-=======
 	songs.insert({
 		name:songName,
 		bpm : header.bpm,
@@ -114,15 +84,15 @@ function addSong(songName, parsedMidi){
 	views["songView"] = songView;
 	views["tracksView"] = tracksView;
 	views["songNotes"] = songNotes;
->>>>>>> master
+
 	console.log(tracks);
 	console.log(notes);
 }
 
 function printSong(songName){
-<<<<<<< HEAD
 	views["songView"].applyFind({'name': songName});
 	console.log(views["songView"].data());
+	
 }
 
 function removeSong(songName){
@@ -166,13 +136,6 @@ module.exports = function(){
 	 console.log(view.data());
 
 };*/
-=======
-	views["songView"].applyFind({'name': songName}, "songName");	// we only want one filter at a time,
-																// give it a static ID so it will be replaced
-	views["songNotes"].applyFind({name: songName}, "songName");	// we only want one filter at a time,
-																// give it a static ID so it will be replaced
-	console.log(views["songView"].data());
-}
 
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers
@@ -212,4 +175,3 @@ function initPianoState() {
     }
     activeKeysView.applyFind({"noteOn":true});
 }
->>>>>>> master
