@@ -12,7 +12,10 @@ module.exports = {
 	stop : stop
 };
 
-var SerialPort = require('serialport');
+/**
+ * @deprecated
+ * */
+var SerialPort = null; //require('serialport');
 
 // Ports will be assigned after ID is obtained
 var portLeft, portRight, port430;
