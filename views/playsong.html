@@ -50,6 +50,13 @@
 </div>
 <div>
     <img src="images/grand_staff.PNG" alt="Grand Staff -> Midi" style="vertical-align: middle"/>
+    <div id="tracks_checkboxes">
+    <ul>
+        {{#tracks}}
+            <li><input type="checkbox">{{trackName}}</li>
+        {{/tracks}}
+    </ul>
+</div>
 </div>
 <script>
     $(document).ready(function() {

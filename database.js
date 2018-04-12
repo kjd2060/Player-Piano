@@ -78,19 +78,20 @@ function addSong(songName, parsedMidi){
 		duration : parsedMidi.duration });
 
 	var songView = songs.addDynamicView("songView");
-	var tracksView = songs.addDynamicView("tracksView");
+	var tracksView = tracks.addDynamicView("tracksView");
 	var songNotes = notes.addDynamicView("songNotes");
 	views["songView"] = songView;
 	views["tracksView"] = tracksView;
 	views["songNotes"] = songNotes;
 
-	console.log(tracks);
-	console.log(notes);
+	//console.log(views["tracksView"].data());
+	// console.log(tracks);
+	// console.log(notes);
 }
 
 function printSong(songName){
 	views["songView"].applyFind({'name': songName}, "printSongFind");
-	console.log(views["songView"].data());
+	// console.log(views["songView"].data());
 	views["songView"].removeFilter("printSongFind");
 }
 
@@ -100,15 +101,15 @@ function removeSong(songName){
 
 
 function getSongView(){
-	return views["songView"];
+	return views["songView"].data();
 }
 
 function getTrackView(){
-	return views["trackView"];
+	return views["tracksView"].data();
 }
 
 function getNotesView(){
-	return views["notesVIew"];
+	return views["songNotes"].data();
 }
 /*
  * INTERNAL FUNCTIONS

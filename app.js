@@ -100,7 +100,7 @@ app.get('/view', function(req, res) {
             // convert midi to json
             var midiJSON = midiProcessor.convertToJSON(midiStr);
 	   // console.log('midi json:');
-	   console.log(JSON.stringify(midiJSON));
+	   // console.log(JSON.stringify(midiJSON));
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
 
@@ -170,8 +170,43 @@ app.get('/song', function(req, res) {
 				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr});
 			}
 
-            var tracks = database.getTrackView();
-            
+            var dbTracks = database.getTrackView();
+            var obj = {
+                tracks: []
+            };
+
+            // var jsonString = '{"trackNames": [';
+
+            //console.log("dbTracks[0]: " + dbTracks[0].instrument + "\n");
+            //console.log("dbTracks[1]: " + JSON.stringify(dbTracks[1]) + "\n");
+            //console.log(dbTracks[1].instrument + "\n");
+
+            for(var i = 0; i < dbTracks.length; i++){
+                var track = dbTracks[i];
+                if(!track.name){
+                    obj.tracks.push({trackName: track.instrument});
+                }
+                else{
+                    obj.tracks.push({trackName: track.name});
+                }
+            }
+            /*
+            for(var track in dbTracks){
+                console.log("Track loop track: " + track + "\n");
+                if(!track.name){
+                    obj.tracks.push({trackName: track.instrumentFamily});
+                    console.log("No track name");
+                }
+                else{
+                    obj.tracks.push({trackName: track.name});
+                }
+
+                console.log("trackName: " + track.name + "\n");
+                console.log("instrumentFamily: " + track.instrumentFamily + "\n");
+            }
+            */
+            var json = JSON.stringify(obj);
+            console.log("Constructed JSON for checkboxes:\n" + json);
 
         } else {
             // Failed to read the .midi file, throw error
