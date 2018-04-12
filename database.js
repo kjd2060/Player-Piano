@@ -7,7 +7,6 @@ module.exports = {
 	getTrackView : getTrackView,
 	getNotesView : getNotesView,
 	getDB: getDB,
-    initPianoState: initPianoState,
     getSongNotes: getSongNotes
 
 };
@@ -26,6 +25,7 @@ var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
 
 var pianoState = db.addCollection("pianoState");
+initPianoState();
 var views = [];
 
 /*
