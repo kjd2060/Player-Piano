@@ -24,7 +24,7 @@ function velocityToDac(noteObj){
     // const velocityMin = 0;
     // const velocityMax = 1;
     // map velocity to DAC, taking into account that key's weight calibration value
-    return dacMin + ((dacMax - dacMin)*noteObj.velocityValue) + noteObj.weightCal; // simplified, premature optimization :^)
+    return dacMax - (dacMin + ((dacMax - dacMin)*noteObj.velocityValue) + noteObj.weightCal); // simplified, premature optimization :^)
     //return dacMin + ((dacMax - dacMin)/(velocityMax- velocityMin))*(noteObj.velocity_value - velocityMin) + noteObj.weightCal; // proper way if velocity scale changes
 
 }
@@ -65,6 +65,12 @@ function playSong(db, userBPM, startTime){
     var currentSongData = currentSong.data()[0];
     var pianoState = db.getCollection("pianoState");
     spi.initSpi();
+
+    // If BPM is not provided, use the file's value for playback
+    if (userBPM===null){
+        userBPM = currentSongData.bpm;
+    }
+
     // determine our timing resolution based on smallest time unit in the track (pulse)
     //   query this amount of time in the midi data (in seconds):
     var midiInterval = 60 / (currentSongData.bpm * currentSongData.PPQ);

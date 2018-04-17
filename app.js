@@ -144,17 +144,6 @@ app.get('/song', function(req, res) {
 
             database.addSong(result[0].SongName, midiJSON);
             database.printSong(result[0].SongName);
-           /* console.log('json processed:');
-=======
-            database.addSong(filename, midiJSON);
-            database.printSong(filename);
-            database.initPianoState();
-            /* console.log('json processed:');
->>>>>>> master
-            console.log(JSON.stringify(midiJSON));
-            console.log('song processed:');
-            console.log(JSON.stringify(song));*/
-    		//console.log("duration: " + dur + ", in m-s: " + (Math.floor(dur/60)) + "m " + ((dur % 1)*60).toFixed(2) + "s");
 
 			if(pianoConnected){
 				console.log("piano connected");
@@ -191,7 +180,7 @@ app.post('/start', function(req, res) {
     // piano.play(tempoChar, function() {
     //     res.send('success');
     // });
-    midi.playSong(database.getDB(),96,0);
+    midi.playSong(database.getDB(),null,0);
 });
 
 app.post('/pause', function(req, res) {
