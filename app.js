@@ -141,6 +141,7 @@ app.get('/song', function(req, res) {
             var processorResult = midiProcessor.parseMidiJSON(midiJSON);
             var song = processorResult.simpleArray;
             dur = midiJSON.duration;
+            //var songName = result[0].SongName;
 
             database.addSong(result[0].SongName, midiJSON);
             database.printSong(result[0].SongName);
@@ -156,40 +157,38 @@ app.get('/song', function(req, res) {
             console.log(JSON.stringify(song));*/
     		//console.log("duration: " + dur + ", in m-s: " + (Math.floor(dur/60)) + "m " + ((dur % 1)*60).toFixed(2) + "s");
 
+            var dbTracks = database.getTrackView();
+
+            var obj = []
+            for(var i = 0; i < dbTracks.length; i++){
+                var track = dbTracks[i];
+                //console.log(result[0].SongName);
+                // || !(track.song.equals(results[0].SongName))
+                if((!track.name && !track.instrument)  || !(track.song === result[0].SongName)){
+                    // do nothing
+                }
+                else if(!track.name){
+                    obj.push({trackName: track.instrument});
+                }
+                else{
+                    obj.push({trackName: track.name});
+                }
+            }
+
 			if(pianoConnected){
 				console.log("piano connected");
 				// load the song on to the piano
 				piano.loadSong(song, function() {
 					// loading song was successful!
-					res.render('playsong.html', {fn: req.query.fn, fileName: filePath});
+					res.render('playsong.html', {fn: req.query.fn, fileName: filePath, tracks:obj});
 					
 				});
 			}
 			else{
 				var durStr = ""+(Math.floor(dur/60)) + ":" + ((dur % 1)*60).toFixed(0);
-				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr});
+				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr, tracks:obj});
 			}
-
-            var dbTracks = database.getTrackView();
-            var obj = {
-                tracks: []
-            };
-
-            // var jsonString = '{"trackNames": [';
-
-            //console.log("dbTracks[0]: " + dbTracks[0].instrument + "\n");
-            //console.log("dbTracks[1]: " + JSON.stringify(dbTracks[1]) + "\n");
-            //console.log(dbTracks[1].instrument + "\n");
-
-            for(var i = 0; i < dbTracks.length; i++){
-                var track = dbTracks[i];
-                if(!track.name){
-                    obj.tracks.push({trackName: track.instrument});
-                }
-                else{
-                    obj.tracks.push({trackName: track.name});
-                }
-            }
+            
             /*
             for(var track in dbTracks){
                 console.log("Track loop track: " + track + "\n");
@@ -205,8 +204,8 @@ app.get('/song', function(req, res) {
                 console.log("instrumentFamily: " + track.instrumentFamily + "\n");
             }
             */
-            var json = JSON.stringify(obj);
-            console.log("Constructed JSON for checkboxes:\n" + json);
+            //var json = JSON.stringify(obj);
+            //console.log("Constructed JSON for checkboxes:\n" + json);
 
         } else {
             // Failed to read the .midi file, throw error
@@ -241,6 +240,21 @@ app.post('/stop', function(req, res) {
     });
 });
 
+app.post('/updateTracks', function(req, res){
+    var checkedBoxes = req.body;
+    // we know we're only getting data when the checkbox is checked.  figure out a way to filter out the tracks!
+    var trackView = database.getTrackView();
+    // {request_data : trackName }
+    for(var t in trackView){
+        if((trackView.name === req.body.request_data) || (trackView.instrument === req.body.request_data)){
+            trackView.checked = true;
+            console.log("checked");
+        }
+    }
+    //console.log(trackView);
+    //console.log(req.body.request_data);
+    console.log(database.getTrackView());
+})
 
 
 

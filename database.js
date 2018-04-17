@@ -8,8 +8,8 @@ module.exports = {
 	getNotesView : getNotesView,
 	getDB: getDB,
     initPianoState: initPianoState,
-    getSongNotes: getSongNotes
-
+    getSongNotes: getSongNotes,
+    getCheckedTracks : getCheckedTracks
 };
 
 var loki = require('lokijs');
@@ -24,7 +24,6 @@ var db = new loki("loki.json");
 var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
-
 var pianoState = db.addCollection("pianoState");
 var views = [];
 
@@ -40,6 +39,11 @@ function getDB(){
 }
 
 function addSong(songName, parsedMidi){
+	results = songs.find({"name" : {'$eq' : songName}});
+	if(!results === undefined || !results.length == 0){
+		console.log(songName + " exists");
+		return;
+	}
 	if(parsedMidi.isPercussion)
 	{
 		return;
@@ -52,6 +56,7 @@ function addSong(songName, parsedMidi){
 			song:songName,
 			id : tempTracks[i].id,
 			name : tempTracks[i].name,
+			checked : false,
 			instrumentNumber : tempTracks[i].instrumentNumber,
 			instrumentFamily : tempTracks[i].instrumentFamily,
 			instrument : tempTracks[i].instrument });
@@ -111,6 +116,24 @@ function getTrackView(){
 function getNotesView(){
 	return views["songNotes"].data();
 }
+
+function getCheckedTracks(){
+	var checkedTracks = [];
+	var tracks = views["tracksView"].data();
+	for(var t in tracks){
+		if(t.checked === true)
+			checkedTracks.insert(t);
+	}
+	return checkedTracks;
+}
+
+// track identifier can be the name or the instrument
+function addCheckedTracks(songName, trackIdentifier){
+	checkedTracks.insert({songName, trackIdentifier});
+}
+function removeCheckedTracks(songName, trackIdentifer){
+	checkedTracks.remove({songName, trackIdentifier});
+}
 /*
  * INTERNAL FUNCTIONS
 */
@@ -137,14 +160,22 @@ module.exports = function(){
 
 };*/
 
+// ct has songName and trackIdentifier
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers
 	// TODO: update this to only select the tracks we want
 	var allTracks = tracks.find({"song":songName});
 	var idArray = [];
-	for (var t in allTracks){
-		idArray.push(allTracks[t].id);
+	for(var t in allTracks){
+		for(var ct in checkedTracks){
+			if((ct.songName === t.song && ct.trackIdentifier === t.instrument) || (ct.songName === t.song && ct.trackIdentifier === t.name)){
+				idArray.push(allTracks[t].id);
+			}
+		}
 	}
+	/*for (var t in allTracks){
+		idArray.push(allTracks[t].id);
+	}*/
 
 	// grab notes that are in our selected tracks
 	return notes.chain().find({ // returns a Resultset for further queries

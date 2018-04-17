@@ -51,9 +51,9 @@
 <div>
     <img src="images/grand_staff.PNG" alt="Grand Staff -> Midi" style="vertical-align: middle"/>
     <div id="tracks_checkboxes">
-    <ul>
+    <ul style="list-style: none;"">
         {{#tracks}}
-            <li><input type="checkbox">{{trackName}}</li>
+            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);">{{trackName}}</li>
         {{/tracks}}
     </ul>
 </div>
@@ -96,6 +96,15 @@
         $.post('/stop', function(data) {
             console.log(data);
         });
+    }
+    function updateTracks(data){
+        if(data.checked){
+            value = data.getAttribute("value");
+            $.post('/updateTracks', {request_data : value}, function(data){
+
+                console.log(data);
+            })
+        }
     }
 </script>
 </body>
