@@ -9,13 +9,15 @@ Author: Edward Maskelony  |  exm8563@rit.edu
 */
 module.exports = {
     // Raspberry Pi pin assignments
-    board_enables : [-1,11,12,13,15,16,18,22,27,28,29,31],  // index this by board address, base 1; address 0 is invalid
-    shiftreg_rclk : 7,
+    // board_enables : [-1,11,12,13,15,16,18,22,27,28,29,31],  // index this by board address, base 1; address 0 is invalid
+    // flipped for 6-board layout, based on current wiring
+    board_enables : [-1,18,16,15,13,12,11],  // index this by board address, base 1; address 0 is invalid
+    shiftreg_rclk : 33,
 
     // Control PCB Properties
-    modules_connected : 1,
+    modules_connected : 6,
     module_size : 8,
-    module_base : 57, // this is the position of our lowest solenoid (will be 37 (C#2/Db2) with our 48-key implementation)
+    module_base : 37, // this is the position of our lowest solenoid (will be 37 (C#2/Db2) with our 48-key implementation)
     adc_cmd : {  // includes DAC opcodes in case we need them
         "adcSelectShift":12,
         "dataReset":0xE000,

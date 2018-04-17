@@ -57,16 +57,16 @@ function finishSpi() {
  * Set RCLK 0 to 1, pushing data in serial registers to output registers
  */
 function rclkRisingEdge() {
-    //rpio.spiChipSelect(0);
-    rpio.write(shiftreg_rclk, rpio.HIGH);
+    rpio.spiChipSelect(0);
+    // rpio.write(shiftreg_rclk, rpio.HIGH);
 }
 
 /**
  * Set RCLK 1 to 0, ready for the next rising edge
  */
 function rclkFallingEdge() {
-    //rpio.spiChipSelect(1); // CE0 selected,
-    rpio.write(shiftreg_rclk, rpio.LOW);
+    rpio.spiChipSelect(1); // CE0 selected,
+    // rpio.write(shiftreg_rclk, rpio.LOW);
 }
 
 /**
