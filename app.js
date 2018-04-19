@@ -38,7 +38,7 @@ app.get('/', function(req, res) {
 			temp = file.replace(/[ _]-[ _]/gi, ' ^ ');
 			temp = temp.replace(/[-_]/gi, ' ');
 			temp = temp.replace(/\^/gi, '-');
-			copy.push(temp.replace(/.mid/i, ''));
+			copy.push(temp.replace(/\.mid/i, ''));
 			songs.push({SongName: copy[index], FileName: file});
 			//console.log(copy[index], file);
 		});
@@ -145,17 +145,6 @@ app.get('/song', function(req, res) {
 
             database.addSong(result[0].SongName, midiJSON);
             database.printSong(result[0].SongName);
-           /* console.log('json processed:');
-=======
-            database.addSong(filename, midiJSON);
-            database.printSong(filename);
-            database.initPianoState();
-            /* console.log('json processed:');
->>>>>>> master
-            console.log(JSON.stringify(midiJSON));
-            console.log('song processed:');
-            console.log(JSON.stringify(song));*/
-    		//console.log("duration: " + dur + ", in m-s: " + (Math.floor(dur/60)) + "m " + ((dur % 1)*60).toFixed(2) + "s");
 
             var dbTracks = database.getTrackView();
 
@@ -225,7 +214,7 @@ app.post('/start', function(req, res) {
     // piano.play(tempoChar, function() {
     //     res.send('success');
     // });
-    midi.playSong(database.getDB(),96,0);
+    midi.playSong(database.getDB(),null,0);
 });
 
 app.post('/pause', function(req, res) {

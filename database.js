@@ -10,6 +10,7 @@ module.exports = {
     initPianoState: initPianoState,
     getSongNotes: getSongNotes,
     getCheckedTracks : getCheckedTracks
+    getSongNotes: getSongNotes
 };
 
 var loki = require('lokijs');
@@ -25,6 +26,7 @@ var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
 var pianoState = db.addCollection("pianoState");
+initPianoState();
 var views = [];
 
 /*
