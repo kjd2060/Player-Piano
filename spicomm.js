@@ -150,6 +150,7 @@ function setKeyEnables(noteArray) {
 
     // shift register reads data on clock rising egde
     rpio.spiSetDataMode(0);
+    console.log(noteArray+';   '+enableBitstream);
     // ready the shift register, and Transmit!
     var keyEnableBuffer = new Buffer(enableBitstream);
     rpio.spiWrite(keyEnableBuffer, keyEnableBuffer.length);

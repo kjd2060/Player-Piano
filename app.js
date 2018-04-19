@@ -175,9 +175,15 @@ app.get('/song', function(req, res) {
 			}
 			else{
 				var durStr = ""+(Math.floor(dur/60)) + ":" + ((dur % 1)*60).toFixed(0);
-				res.render('playsong.html', {fn:req.query.fn, fileName: filePath, songEnd: durStr, tracks:obj});
+				res.render('playsong.html', {
+				    fn:req.query.fn,
+                    fileName: filePath,
+                    songEnd: durStr,
+                    baseBPM:database.getCurrentSongBPM(),
+                    tracks:obj
+                });
 			}
-            
+
             /*
             for(var track in dbTracks){
                 console.log("Track loop track: " + track + "\n");
@@ -205,16 +211,12 @@ app.get('/song', function(req, res) {
 
 // Playback controls for song (buttons) via post
 app.post('/start', function(req, res) {
-    // String.fromCharCode(10)
     var tempo = req.body.tempo;
+    var startTime = req.body.startTime;
     if (!tempo) {
-	tempo = 10;
+	    tempo = 120;
     }
-    var tempoChar = String.fromCharCode(32 + Number(tempo));
-    // piano.play(tempoChar, function() {
-    //     res.send('success');
-    // });
-    midi.playSong(database.getDB(),null,0);
+    midi.playSong(database.getDB(),tempo,startTime);
 });
 
 app.post('/pause', function(req, res) {
@@ -245,7 +247,7 @@ app.post('/updateTracks', function(req, res){
 var timer = setInterval(workWithTimer, 1000);
 
 function workWithTimer(){
-    
+
 }
 return app;
 
