@@ -6,10 +6,11 @@ module.exports = {
     finishSpi: finishSpi,
     setDac: setDac,
     setKeyEnables: setKeyEnables,
+    allKeysOff: allKeysOff,
     genCalMap: genCalMap
 };
 
-var rpio = require('rpio');
+var rpio = require('./rpio');
 var gc = require("./globalConstants");
 
 const board_enables = gc.board_enables;  // index this by board address, base 1; address 0 is invalid
@@ -144,11 +145,18 @@ function setKeyEnables(noteArray) {
         // set the bit; our shift register chain receives the highest note first (and we transmit MSB first)
         enableBitstream[modules_connected-1-(Math.floor(localKey/8))] |= 1 << localKey%8; // 8 is just byte size here, no magic.
     }
-
+    console.log(noteArray+';   '+enableBitstream);
     // ready the shift register, and Transmit!
     var keyEnableBuffer = new Buffer(enableBitstream);
     rpio.spiWrite(keyEnableBuffer, keyEnableBuffer.length);
     // enables sent, push data to output
     rclkRisingEdge();
     rclkFallingEdge();
+}
+
+/**
+ * shortcut to turn all keys off
+ */
+function allKeysOff(){
+    setKeyEnables([]);
 }

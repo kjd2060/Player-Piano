@@ -7,12 +7,11 @@ module.exports = {
 	getTrackView : getTrackView,
 	getNotesView : getNotesView,
 	getDB: getDB,
+    getCurrentSongBPM: getCurrentSongBPM,
     getSongNotes: getSongNotes
 
 };
 
-var loki = require('lokijs');
-	
 var loki = require('lokijs');
 var gc = require("./globalConstants");
 
@@ -150,6 +149,11 @@ function getSongNotes(songName) {
 		song: songName,
 		trackID:{$in : idArray}
 	});
+}
+
+function getCurrentSongBPM(){
+    var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
+    return Math.round(currentSong.data()[0].bpm);
 }
 
 function removeSong(songName){
