@@ -38,7 +38,7 @@ app.get('/', function(req, res) {
 			temp = file.replace(/[ _]-[ _]/gi, ' ^ ');
 			temp = temp.replace(/[-_]/gi, ' ');
 			temp = temp.replace(/\^/gi, '-');
-			copy.push(temp.replace(/.mid/i, ''));
+			copy.push(temp.replace(/\.mid/i, ''));
 			songs.push({SongName: copy[index], FileName: file});
 			//console.log(copy[index], file);
 		});
