@@ -7,8 +7,10 @@ module.exports = {
 	getTrackView : getTrackView,
 	getNotesView : getNotesView,
 	getDB: getDB,
+    initPianoState: initPianoState,
+    getSongNotes: getSongNotes,
+    getCheckedTracks : getCheckedTracks
     getSongNotes: getSongNotes
-
 };
 
 var loki = require('lokijs');
@@ -23,7 +25,6 @@ var db = new loki("loki.json");
 var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
-
 var pianoState = db.addCollection("pianoState");
 initPianoState();
 var views = [];
@@ -40,6 +41,11 @@ function getDB(){
 }
 
 function addSong(songName, parsedMidi){
+	results = songs.find({"name" : {'$eq' : songName}});
+	if(!results === undefined || !results.length == 0){
+		console.log(songName + " exists");
+		return;
+	}
 	if(parsedMidi.isPercussion)
 	{
 		return;
@@ -52,6 +58,7 @@ function addSong(songName, parsedMidi){
 			song:songName,
 			id : tempTracks[i].id,
 			name : tempTracks[i].name,
+			checked : false,
 			instrumentNumber : tempTracks[i].instrumentNumber,
 			instrumentFamily : tempTracks[i].instrumentFamily,
 			instrument : tempTracks[i].instrument });
@@ -78,19 +85,20 @@ function addSong(songName, parsedMidi){
 		duration : parsedMidi.duration });
 
 	var songView = songs.addDynamicView("songView");
-	var tracksView = songs.addDynamicView("tracksView");
+	var tracksView = tracks.addDynamicView("tracksView");
 	var songNotes = notes.addDynamicView("songNotes");
 	views["songView"] = songView;
 	views["tracksView"] = tracksView;
 	views["songNotes"] = songNotes;
 
-	console.log(tracks);
-	console.log(notes);
+	//console.log(views["tracksView"].data());
+	// console.log(tracks);
+	// console.log(notes);
 }
 
 function printSong(songName){
 	views["songView"].applyFind({'name': songName}, "printSongFind");
-	console.log(views["songView"].data());
+	// console.log(views["songView"].data());
 	views["songView"].removeFilter("printSongFind");
 }
 
@@ -100,15 +108,15 @@ function removeSong(songName){
 
 
 function getSongView(){
-	return views["songView"];
+	return views["songView"].data();
 }
 
 function getTrackView(){
-	return views["trackView"];
+	return views["tracksView"].data();
 }
 
 function getNotesView(){
-	return views["notesVIew"];
+	return views["songNotes"].data();
 }
 /*
  * INTERNAL FUNCTIONS
@@ -136,14 +144,20 @@ module.exports = function(){
 
 };*/
 
+// ct has songName and trackIdentifier
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers
 	// TODO: update this to only select the tracks we want
 	var allTracks = tracks.find({"song":songName});
 	var idArray = [];
-	for (var t in allTracks){
-		idArray.push(allTracks[t].id);
+	for(var t in allTracks){
+		if(t.checked == true){
+			idArray.push(allTracks[t].id);
+		}
 	}
+	/*for (var t in allTracks){
+		idArray.push(allTracks[t].id);
+	}*/
 
 	// grab notes that are in our selected tracks
 	return notes.chain().find({ // returns a Resultset for further queries

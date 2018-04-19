@@ -13,6 +13,7 @@
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "express-fileupload": "0.0.5",
+    "handlebars": "^4.0.11",
     "lokijs": "^1.5.3",
     "midiconvert": "^0.4.1",
     "mustache": "^2.3.0",
