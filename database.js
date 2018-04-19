@@ -116,24 +116,6 @@ function getTrackView(){
 function getNotesView(){
 	return views["songNotes"].data();
 }
-
-function getCheckedTracks(){
-	var checkedTracks = [];
-	var tracks = views["tracksView"].data();
-	for(var t in tracks){
-		if(t.checked === true)
-			checkedTracks.insert(t);
-	}
-	return checkedTracks;
-}
-
-// track identifier can be the name or the instrument
-function addCheckedTracks(songName, trackIdentifier){
-	checkedTracks.insert({songName, trackIdentifier});
-}
-function removeCheckedTracks(songName, trackIdentifer){
-	checkedTracks.remove({songName, trackIdentifier});
-}
 /*
  * INTERNAL FUNCTIONS
 */
@@ -167,10 +149,8 @@ function getSongNotes(songName) {
 	var allTracks = tracks.find({"song":songName});
 	var idArray = [];
 	for(var t in allTracks){
-		for(var ct in checkedTracks){
-			if((ct.songName === t.song && ct.trackIdentifier === t.instrument) || (ct.songName === t.song && ct.trackIdentifier === t.name)){
-				idArray.push(allTracks[t].id);
-			}
+		if(t.checked == true){
+			idArray.push(allTracks[t].id);
 		}
 	}
 	/*for (var t in allTracks){

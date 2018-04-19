@@ -44,16 +44,21 @@
         </div>
 		<div class="col-xs-8 col-xs-offset-2 text-center">
             <h3>Time:</h3>
-            <b>0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b>{{songEnd}}</b>
+            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b>{{songEnd}}</b>
         </div>
     </div>
 </div>
 <div>
-    <img src="images/grand_staff.PNG" alt="Grand Staff -> Midi" style="vertical-align: middle"/>
-    <div id="tracks_checkboxes">
+    <!-- I can't remember why we were using this so I'm commenting it out since visually it's bad
+        <img src="images/grand_staff.PNG" alt="Grand Staff -> Midi" style="vertical-align: middle"/>-->
+    <div class="col-xs-8 col-xs-offset-2 text-center" id="tracks_checkboxes">
+        <br/>
+        <br/>
+        <br/>
+        <h3>Tracks to play:</h3>
     <ul style="list-style: none;"">
         {{#tracks}}
-            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);">{{trackName}}</li>
+            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);">&nbsp;{{trackName}}</li>
         {{/tracks}}
     </ul>
 </div>
@@ -73,6 +78,9 @@
                 return 'Current value: ' + value;
             }
         });
+        // stopTimer();
+        // do math to figure out new time
+        // startTimer();
     });
 	
     function pause() {
@@ -90,12 +98,14 @@
                             console.log(data);
                         }
         );
+        startTimer();
     }
 
     function stop() {
         $.post('/stop', function(data) {
             console.log(data);
         });
+        stopTimer();
     }
     function updateTracks(data){
         if(data.checked){
@@ -105,6 +115,38 @@
                 console.log(data);
             })
         }
+    }
+
+    var myVar = null;
+    
+    function startTimer(){
+        myVar = setInterval(myTimer, 1000);
+    }
+    
+    function stopTimer(){
+        if(myVar != null){
+            clearInterval(myVar);
+        }
+    }
+
+    function myTimer(){
+        var time = document.getElementById("songCurrentTime").innerHTML;
+        time = time.replace(/\D/g, '');
+        //time = time.replace('<!--0:00-->&nbsp;&nbsp;', '');
+        console.log(time)
+        var timeInt = parseInt(time);
+        timeInt += 1;
+        var minutes = Math.floor(timeInt / 60);
+        var seconds = timeInt - minutes * 60;
+        var newtime = "" + minutes + ":" + (seconds < 10 ? "0" : "");
+        newtime = newtime + seconds;
+        newtime = newtime + "&nbsp;&nbsp;";
+        document.getElementById("songCurrentTime").innerHTML = newtime;
+        console.log(newtime);
+    }
+
+    function str_pad_left(string, pad, length){
+        return (new Array(length+1).join(pad)+string).slice(-length);
     }
 </script>
 </body>

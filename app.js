@@ -245,19 +245,19 @@ app.post('/updateTracks', function(req, res){
     // we know we're only getting data when the checkbox is checked.  figure out a way to filter out the tracks!
     var trackView = database.getTrackView();
     // {request_data : trackName }
-    for(var t in trackView){
-        if((trackView.name === req.body.request_data) || (trackView.instrument === req.body.request_data)){
-            trackView.checked = true;
-            console.log("checked");
+    for(var i = 0; i < trackView.length; i++){
+        var t = trackView[i];
+        if((t.name === req.body.request_data) || (t.instrument === req.body.request_data)){
+            t.checked = true;
         }
     }
-    //console.log(trackView);
-    //console.log(req.body.request_data);
-    console.log(database.getTrackView());
 })
 
+var timer = setInterval(workWithTimer, 1000);
 
-
+function workWithTimer(){
+    
+}
 return app;
 
 };
