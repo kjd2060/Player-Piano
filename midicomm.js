@@ -7,7 +7,7 @@ module.exports = {
     playSong: playSong
 };
 var spi = require("./spicomm");
-var pedal = require("./pedalcomm");
+//var pedal = require("./pedalcomm");
 var Loki = require("lokijs"); //TODO: extract my queries and put them in database.js, remove this import
 var database = require("./database");
 var gc = require("./globalConstants");
