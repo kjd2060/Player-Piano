@@ -126,16 +126,18 @@ function enableSpeedTest0(){
     // play notes of different durations
     spi.initSpi();
 
-    spi.setDac(0,255);
-    spi.setDac(1,255);
-
+    spi.setDac(37,500);
+    spi.setDac(45,255);
+    spi.setDac(53,500);
+    spi.setDac(61,500);
+/*
     for (var d=1200; d>0;d-=60){
         spi.setKeyEnables([0,1]);
         rpio.msleep(d);
         spi.setKeyEnables([]);
         rpio.msleep(750);
     }
-
+*/
     spi.finishSpi();
 }
 
@@ -193,23 +195,21 @@ function multipleKeyTest() {
 function scanKeysTest() {
     spi.initSpi();
 
-    var testVal = 40;
-    spi.setDac(1, testVal);
-    spi.setDac(2, testVal);
-    spi.setDac(3, testVal);
-    spi.setDac(4, testVal);
-    spi.setDac(5, testVal);
-    spi.setDac(6, testVal);
+    var testVal = 500;
+    for (var k=37; k<=84; k++) {
+    	spi.setDac(k,80);
+    }
 
-    for (var delayTime = 1000; delayTime >= 1000; delayTime -= 50) {
-        spi.setKeyEnables([1]);
-        rpio.msleep(delayTime);
-        for (var k=2; k<=6; k++) {
-            spi.setKeyEnables([k-1, k]);
+
+    for (var delayTime = 1000; delayTime >= 500; delayTime -= 850) {
+        //rpio.msleep(delayTime);
+        for (var k=37; k<=84; k++) {
+	    //spi.setDac(k,800);
+            spi.setKeyEnables([k]);
             rpio.msleep(delayTime);
         }
-        spi.setKeyEnables([6]);
-        rpio.msleep(delayTime);
+
+        //rpio.msleep(delayTime);
 
     }
 
@@ -222,6 +222,25 @@ function oneNote(note, onTime, pauseTime) {
     rpio.msleep(onTime);
     spi.setKeyEnables([]);
     rpio.msleep(pauseTime);
+}
+
+function testOneKey() {
+    spi.initSpi();
+
+    var testVal = 500;
+    for (var k=37; k<=84; k++) {
+    	spi.setDac(k,0);
+    }
+    
+    var testKey = 41;
+    
+    oneNote(testKey, 1500, 1000);
+    oneNote(testKey, 1000, 1000);
+    oneNote(testKey, 500, 1000);
+    oneNote(testKey, 300, 1000);
+    oneNote(testKey, 100, 1000);
+    
+    spi.finishSpi();
 }
 
 function maryTest() {
@@ -276,6 +295,27 @@ function maryTest() {
     spi.finishSpi();
 }
 
+function jaredFunTest() {
+    spi.initSpi();
+    
+    var allKeys = [];
+    
+    for (var k=37; k<=84; k++) {
+    	spi.setDac(k,500);
+    	allKeys[k-37] = k;
+    }
+    
+ //   console.log(allKeys);
+    
+    spi.setKeyEnables(allKeys);
+    
+//    spi.setKeyEnables(allKeys);
+//    rpio.msleep(100000);
+
+//    spi.setKeyEnables([]);
+    spi.finishSpi();
+}
+
 
 //spiTest();
 //briefTest();
@@ -283,7 +323,10 @@ function maryTest() {
 //velocityTest2();
 //velocityTest3();
 //dacEnableTest();
-//enableSpeedTest();
+//enableSpeedTest0();
 //multipleKeyTest();
-//scanKeysTest();
-maryTest();
+scanKeysTest();
+//maryTest();
+
+//jaredFunTest();
+//testOneKey();

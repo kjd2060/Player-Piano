@@ -8,13 +8,9 @@ module.exports = {
 	getNotesView : getNotesView,
 	getDB: getDB,
     initPianoState: initPianoState,
-    getSongNotes: getSongNotes,
-    getCheckedTracks : getCheckedTracks
     getSongNotes: getSongNotes
 };
 
-var loki = require('lokijs');
-	
 var loki = require('lokijs');
 var gc = require("./globalConstants");
 
@@ -90,10 +86,6 @@ function addSong(songName, parsedMidi){
 	views["songView"] = songView;
 	views["tracksView"] = tracksView;
 	views["songNotes"] = songNotes;
-
-	//console.log(views["tracksView"].data());
-	// console.log(tracks);
-	// console.log(notes);
 }
 
 function printSong(songName){
@@ -101,11 +93,6 @@ function printSong(songName){
 	// console.log(views["songView"].data());
 	views["songView"].removeFilter("printSongFind");
 }
-
-function removeSong(songName){
-
-}
-
 
 function getSongView(){
 	return views["songView"].data();
@@ -122,32 +109,9 @@ function getNotesView(){
  * INTERNAL FUNCTIONS
 */
 
-/*
-module.exports = function(){
-	var db = new loki('loki.json');
-
-	 var doctors = db.addCollection('doctors');
-
-	 doctors.insert({name:'David Tennent', doctorNumber: 10});
-	 doctors.insert({name:'Matt Smith', doctorNumber:11});
-
-	 doctors.insert({name:'Paul McGann', doctorNumber:8});
-	 doctors.insert({name:'Peter Capaldi', doctorNumber:12});
-	 
-	 // console.log(doctors.data);
-
-	 var view = doctors.addDynamicView("newerDoctors");
-	 view.applyWhere(function(obj) { return obj.doctorNumber > 8});
-	 view.applySimpleSort('doctorNumber', true); // 'true' marks an optional parameter for sorting in descending order; defaults to false.
-
-	 console.log(view.data());
-
-};*/
-
 // ct has songName and trackIdentifier
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers
-	// TODO: update this to only select the tracks we want
 	var allTracks = tracks.find({"song":songName});
 	var idArray = [];
 	for(var t in allTracks){
@@ -155,9 +119,6 @@ function getSongNotes(songName) {
 			idArray.push(allTracks[t].id);
 		}
 	}
-	/*for (var t in allTracks){
-		idArray.push(allTracks[t].id);
-	}*/
 
 	// grab notes that are in our selected tracks
 	return notes.chain().find({ // returns a Resultset for further queries

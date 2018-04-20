@@ -29,16 +29,16 @@ function initSpi() {
     rpio.spiBegin();
     // DAC chips are the slowest limit, at 30MHZ; we need to divide our clock down to 25MHz at most (10)
     // Operate at 2MHz (126) just to be safe, with plenty of headroom if we need to speed up to meet our req.
-    rpio.spiSetClockDivider(2520); // 2520 => 100kHz
+    rpio.spiSetClockDivider(1260); // 2520 => 100kHz
     // set GPIO output mode on each enable pin used
     for (var x=1; x <= modules_connected; x++){
         rpio.open(board_enables[x], rpio.OUTPUT);
         // active low, initialize to every board off
         rpio.write(board_enables[x], rpio.HIGH);
     }
-    // open GPIO pin for RCLK
-    rpio.open(shiftreg_rclk,rpio.OUTPUT);
-    // rpio.spiChipSelect(0); // we only need this if we return to using SPI CE pins as RCLK, also need to consider setCSPolarity()
+    // Set to falling-edge phase, start with the clock low
+    rpio.spiSetDataMode(0);
+    rclkFallingEdge();
 }
 
 /**
@@ -86,8 +86,11 @@ function setDac(keyAddress,value){
     var moduleAddress = Math.floor(localKey/module_size)+1;// target is our board address
     // pack bits, stuff 'er into a buffer
     var spiCmd = ((localKey % module_size) << adc_cmd.adcSelectShift) | (value << 2);
-	var spiCmdBuffer = new Buffer([(spiCmd & 0xff00) >> 8,spiCmd & 0xff]);
-	// set enable of target module high, write it, disable
+    var spiCmdBuffer = new Buffer([(spiCmd & 0xff00) >> 8,spiCmd & 0xff]);
+
+    // DAC reads data on clock falling edge
+    rpio.spiSetDataMode(1);
+    // set enable of target module high, write it, disable
     rpio.write(board_enables[moduleAddress], rpio.LOW);
     rpio.spiWrite(spiCmdBuffer, spiCmdBuffer.length);
     rpio.write(board_enables[moduleAddress], rpio.HIGH);
@@ -145,6 +148,8 @@ function setKeyEnables(noteArray) {
         enableBitstream[modules_connected-1-(Math.floor(localKey/8))] |= 1 << localKey%8; // 8 is just byte size here, no magic.
     }
 
+    // shift register reads data on clock rising egde
+    rpio.spiSetDataMode(0);
     // ready the shift register, and Transmit!
     var keyEnableBuffer = new Buffer(enableBitstream);
     rpio.spiWrite(keyEnableBuffer, keyEnableBuffer.length);
