@@ -175,7 +175,7 @@ app.get('/song', function(req, res) {
 
 // Playback controls for song (buttons) via post
 app.post('/start', function(req, res) {
-    var tempo = req.body.tempo;
+    var tempo = parseInt(req.body.tempo);
     var startTime = req.body.startTime;
     if (!tempo) {
 	    tempo = 120;
