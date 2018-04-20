@@ -7,7 +7,8 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Samraaj Singh - v1, Edward Maskelony and Kevin Davison - v2",
+  "author": "Samraaj Singh",
+  "contributors": ["Edward Maskelony", "Kevin Davison"],
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.17.1",
@@ -15,7 +16,7 @@
     "express-fileupload": "0.0.5",
     "handlebars": "^4.0.11",
     "lokijs": "^1.5.3",
-    "midiconvert": "^0.4.1",
+    "midiconvert": "^0.4.4",
     "mustache": "^2.3.0",
     "mustache-express": "^1.2.4"
   },

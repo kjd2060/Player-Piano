@@ -112,12 +112,10 @@ function getNotesView(){
 // ct has songName and trackIdentifier
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers
-	var allTracks = tracks.find({"song":songName});
+	var allTracks = tracks.find({"song":songName, "checked":true});
 	var idArray = [];
 	for(var t in allTracks){
-		if(t.checked == true){
-			idArray.push(allTracks[t].id);
-		}
+		idArray.push(allTracks[t].id);
 	}
 
 	// grab notes that are in our selected tracks
