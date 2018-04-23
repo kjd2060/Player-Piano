@@ -180,8 +180,10 @@ app.get('/song', function(req, res) {
                     fileName: filePath,
                     songEnd: durStr,
                     baseBPM:database.getCurrentSongBPM(),
-                    tracks:obj
+                    tracks:obj,
+                    songEndSeconds:Math.ceil(dur)
                 });
+                console.log("dur: " + Math.ceil(dur));
 			}
 
             /*

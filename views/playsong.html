@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/bootstrap-slider.min.css">
     <link rel="stylesheet" href="css/list.css">
+
+    <style>
+    .btn-dropshadow:hover{
+            box-shadow: 0 5px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+    }
+    </style>
 	
 </head>
 <body style="margin-top:2%">
@@ -22,17 +28,17 @@
     </div>
     <div class="row">
         <div class="col-xs-2 col-xs-offset-2 text-center">
-            <button class="btn btn-primary btn-large" onclick="pause();" hover="box-shadow:0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19)">
+            <button class="btn btn-primary btn-large btn-dropshadow" onclick="pause();">
                 <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
             </button>
         </div>
         <div class="col-xs-4 text-center">
-            <button class="btn btn-primary btn-large" onclick="play();">
+            <button class="btn btn-primary btn-large btn-dropshadow" onclick="play();">
                 <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
             </button>
         </div>
         <div class="col-xs-2 text-center">
-            <button class="btn btn-primary btn-large" onclick="stop();">
+            <button class="btn btn-primary btn-large btn-dropshadow" onclick="stop();">
                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
             </button>
         </div>
@@ -43,7 +49,7 @@
         </div>
 		<div class="col-xs-8 col-xs-offset-2 text-center">
             <h3>Time:</h3>
-            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b id="songEndTime">{{songEnd}}</b>
+            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="{{songEndSeconds}}" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b id="songEndTime">{{songEnd}}</b>
         </div>
     </div>
 </div>
@@ -123,12 +129,26 @@
     function myTimer(){
         var time = document.getElementById("songCurrentTime").innerHTML;
         var endTime = document.getElementById("songEndTime").innerHTML;
-        time = time.replace(/\D/g, '');
-        endTime = endTime.replace(/\D/g, '');
+        /*time = time.replace(/\D/g, '');
+        endTime = endTime.replace(/\D/g, '');*/
         //time = time.replace('<!--0:00-->&nbsp;&nbsp;', '');
-        //console.log(time)
-        var timeInt = parseInt(time);
-        var endTimeInt = parseInt(endTime);
+        var a = time.split(':'); // split it at the colons
+        var  b = endTime.split(':');
+
+        //console.log(b);
+        a[0] = a[0].replace(/\D/g, '');
+        a[1] = a[1].replace(/\D/g, '');
+        
+        b[0] = b[0].replace(/\D/g, '');
+        b[1] = b[1].replace(/\D/g, '');
+        // minutes are worth 60 seconds. Hours are worth 60 minutes.
+        var seconds = (+a[0]) * 60 + (+a[1]);
+        var endTimeSeconds = (+b[0]) * 60 + (+b[1]); 
+        //console.log(seconds);
+
+        var timeInt = parseInt(seconds);
+        var endTimeInt = parseInt(endTimeSeconds);
+        console.log("timeInt: " + timeInt + ", endTimeInt" + endTimeInt);
         if(timeInt < endTimeInt){
             timeInt += 1;
             var minutes = Math.floor(timeInt / 60);
@@ -137,6 +157,7 @@
             newtime = newtime + seconds;
             newtime = newtime + "&nbsp;&nbsp;";
             document.getElementById("songCurrentTime").innerHTML = newtime;
+            $("#time-slider").slider('setValue', timeInt);
         }
         //console.log(newtime);
     }
