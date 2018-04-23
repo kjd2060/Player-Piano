@@ -19,8 +19,8 @@ const minimum_cycle_duration = gc.minimum_cycle_duration_ms;
  * @param noteObj -
  */
 function velocityToDac(noteObj){
-    const dacMin = 0;
-    const dacMax = 1023;
+    const dacMin = gc.minDacValue;
+    const dacMax = gc.maxDacValue;
     // const velocityMin = 0;
     // const velocityMax = 1;
     // map velocity to DAC, taking into account that key's weight calibration value

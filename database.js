@@ -140,14 +140,14 @@ function removeSong(songName){
 function initPianoState() {
     var pianoState = db.getCollection("pianoState");
     var activeKeysView = pianoState.addDynamicView("activeKeys");
-    // var calMap = genCalMap();
+    var calMap = gc.calMap;
     for (var i=midiStart;i<numSupportedKeys+midiStart;i++){
         pianoState.insert({
             keyNumber:i,
             velocityValue:1,
             velocityPrevious:-1,
             noteOn:false,
-            weightCal:0 //calMap[i]
+            weightCal:calMap[i]
         });
     }
     activeKeysView.applyFind({"noteOn":true});
