@@ -22,7 +22,7 @@
     </div>
     <div class="row">
         <div class="col-xs-2 col-xs-offset-2 text-center">
-            <button class="btn btn-primary btn-large" onclick="pause();">
+            <button class="btn btn-primary btn-large" onclick="pause();" hover="box-shadow:0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19)">
                 <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
             </button>
         </div>
@@ -43,7 +43,7 @@
         </div>
 		<div class="col-xs-8 col-xs-offset-2 text-center">
             <h3>Time:</h3>
-            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b>{{songEnd}}</b>
+            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b id="songEndTime">{{songEnd}}</b>
         </div>
     </div>
 </div>
@@ -78,6 +78,7 @@
         $.post('/pause', function(data) {
             console.log(data);
         });
+        stopTimer();
     }
 
     function play() {
@@ -121,18 +122,23 @@
 
     function myTimer(){
         var time = document.getElementById("songCurrentTime").innerHTML;
+        var endTime = document.getElementById("songEndTime").innerHTML;
         time = time.replace(/\D/g, '');
+        endTime = endTime.replace(/\D/g, '');
         //time = time.replace('<!--0:00-->&nbsp;&nbsp;', '');
-        console.log(time)
+        //console.log(time)
         var timeInt = parseInt(time);
-        timeInt += 1;
-        var minutes = Math.floor(timeInt / 60);
-        var seconds = timeInt - minutes * 60;
-        var newtime = "" + minutes + ":" + (seconds < 10 ? "0" : "");
-        newtime = newtime + seconds;
-        newtime = newtime + "&nbsp;&nbsp;";
-        document.getElementById("songCurrentTime").innerHTML = newtime;
-        console.log(newtime);
+        var endTimeInt = parseInt(endTime);
+        if(timeInt < endTimeInt){
+            timeInt += 1;
+            var minutes = Math.floor(timeInt / 60);
+            var seconds = timeInt - minutes * 60;
+            var newtime = "" + minutes + ":" + (seconds < 10 ? "0" : "");
+            newtime = newtime + seconds;
+            newtime = newtime + "&nbsp;&nbsp;";
+            document.getElementById("songCurrentTime").innerHTML = newtime;
+        }
+        //console.log(newtime);
     }
 
     function str_pad_left(string, pad, length){
