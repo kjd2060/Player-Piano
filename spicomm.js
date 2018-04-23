@@ -5,8 +5,7 @@ module.exports = {
     initSpi: initSpi,
     finishSpi: finishSpi,
     setDac: setDac,
-    setKeyEnables: setKeyEnables,
-    genCalMap: genCalMap
+    setKeyEnables: setKeyEnables
 };
 
 var rpio = require('rpio');
@@ -94,35 +93,6 @@ function setDac(keyAddress,value){
     rpio.write(board_enables[moduleAddress], rpio.LOW);
     rpio.spiWrite(spiCmdBuffer, spiCmdBuffer.length);
     rpio.write(board_enables[moduleAddress], rpio.HIGH);
-}
-
-/**
- * provides an adjustment value for each key to compensate its weight
- * @param {int} size - number of keys
- * @returns {Array[]}
- */
-function genCalMap(size){
-    // this function should be edited to calibrate the volumes of keys with different weights
-    // procedure for this will likely be plotting velocity/measured loudness in excel and fitting an equation
-    if (size === null){
-        size = modules_connected*module_size;
-    }
-    // set this to 1 if even midi-numbered notes will be played with the heavier (extended) plungers
-    const evenNotesHeavy = 0;
-
-    var calMap = new Array(size);
-    // populate the map with coefficients that will add (or possibly multiply?) the DAC value
-    for (var i=0;i< calMap.length;i++){
-        if (i%2 !== evenNotesHeavy){
-            // equation for heavier, extended solenoid plungers
-            calMap[i]= 0;
-        }
-        else {
-            // equation for lighter, top-rail solenoid plungers
-            calMap[i]= 0;
-        }
-    }
-    return calMap;
 }
 
 /**

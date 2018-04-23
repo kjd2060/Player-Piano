@@ -34,9 +34,6 @@ module.exports = {
     minDacValue : 0,    // min value controls the loudest setting
     maxDacValue : 80,   // max value controls the quietest setting
 
-    // DAC value calibrations to compensate for differing key weights
-    calMap : genCalMap(null),
-
     /*** Functions ***/
     genCalMap : genCalMap
 };
@@ -77,7 +74,7 @@ function genCalMap(size){
     // this function should be edited to calibrate the volumes of keys with different weights
     // procedure for this will likely be plotting velocity/measured loudness in excel and fitting an equation
     if (size === null){
-        size = exports.modules_connected*exports.module_size;
+        size = module.exports.modules_connected*module.exports.module_size;
     }
     // set this to 1 if even midi-numbered notes will be played with the heavier (extended) plungers
     const evenNotesHeavy = 1;
@@ -85,11 +82,12 @@ function genCalMap(size){
     var calMap = new Array(size);
     // populate the map with coefficients that will add (or possibly multiply?) the DAC value
     for (var i=0;i< calMap.length;i++){
+        var k = i+module.exports.module_base;
         if (i%2 !== evenNotesHeavy) {
             // equation for heavier, extended solenoid plungers
-            if (i <= 55) {
+            if (k <= 55) {
                 calMap[i] = 0;
-            } else if (72 >= i > 55) {
+            } else if (72 >= k && k > 55) {
                 calMap[i] = 20;
             } else {
                 calMap[i] = 40
@@ -97,9 +95,9 @@ function genCalMap(size){
         }
         else {
             // equation for lighter, top-rail solenoid plungers
-            if (i<=55){
+            if (k <=55 ){
                 calMap[i] = 0;
-            } else if (72 >= i > 55){
+            } else if (72 >= k && k > 55){
                 calMap[i] = 20;
             } else {
                 calMap[i] = 40
