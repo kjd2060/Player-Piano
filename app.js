@@ -207,6 +207,7 @@ app.get('/song', function(req, res) {
 app.post('/start', function(req, res) {
     // String.fromCharCode(10)
     var tempo = req.body.tempo;
+    var time = req.body.time;
     if (!tempo) {
 	tempo = 10;
     }

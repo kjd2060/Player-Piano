@@ -9,8 +9,6 @@ module.exports = {
 	getDB: getDB,
     initPianoState: initPianoState,
     getSongNotes: getSongNotes,
-    getCheckedTracks : getCheckedTracks
-    getSongNotes: getSongNotes
 };
 
 var loki = require('lokijs');

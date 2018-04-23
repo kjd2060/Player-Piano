@@ -44,7 +44,7 @@
         </div>
 		<div class="col-xs-8 col-xs-offset-2 text-center">
             <h3>Time:</h3>
-            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b>{{songEnd}}</b>
+            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="{{songEndSeconds}}" data-slider-step="1" data-slider-value="0" data-slider-handle="custom" data-slider-tooltip="hide"/><b>{{songEnd}}</b>
         </div>
     </div>
 </div>
@@ -75,6 +75,15 @@
 	$(document).ready(function() {
         $('#time-slider').slider({
             formatter: function(value) {
+                /*pause();
+                var timeVal = document.getElementById("time-slider").getAttribute("data-slider-value");
+                var minutes = Math.floor(timeVal / 60);
+                var seconds = timeVal - minutes * 60;
+                var newtime = "" + minutes + ":" + (seconds < 10 ? "0" : "");
+                newtime = newtime + seconds;
+                newtime = newtime + "&nbsp;&nbsp;";
+                document.getElementById("songCurrentTime").innerHTML = newtime;
+                playFromTime(timeVal);*/
                 return 'Current value: ' + value;
             }
         });
@@ -92,7 +101,21 @@
     function play() {
         var tempoMod = $('#slider').slider('getValue');
         $.post('/start', {
-                            tempo : tempoMod
+                            tempo : tempoMod,
+                            time : 0
+                        },
+                        function(data) {
+                            console.log(data);
+                        }
+        );
+        startTimer();
+    }
+
+    function playFromTime(time){
+        var tempoMod = $('#slider').slider('getValue');
+        $.post('/start', {
+                            tempo : tempoMod,
+                            time : time
                         },
                         function(data) {
                             console.log(data);
