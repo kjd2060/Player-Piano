@@ -78,8 +78,12 @@ function setDac(keyAddress,value){
     if ((localKey > module_size * modules_connected) || (keyAddress < module_base)){
         throw "Error: key "+keyAddress+" out of range";
     }
-    if (value > 1023 || value < 0){
-        throw "Error: invalid DAC value";
+    if (value > gc.maxDacValue){
+        console.warn("invalid DAC value, clipping to maximum");
+        value = gc.maxDacValue;
+    } else if (value < gc.minDacValue){
+        console.warn("invalid DAC value, clipping to minimum");
+        value = gc.minDacValue;
     }
     // calculate which module this key belongs in
     var moduleAddress = Math.floor(localKey/module_size)+1;// target is our board address
