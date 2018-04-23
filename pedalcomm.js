@@ -1,5 +1,5 @@
 /*
-Provides the commands to control linear actuator pedals
+Provides the commands to control linear actuator pedals in a nodejs wrapper for the python driver
 
 Author: Edward Maskelony  |  exm8563@rit.edu
  */
@@ -8,15 +8,15 @@ Author: Edward Maskelony  |  exm8563@rit.edu
 var pedals ={
     sustain: {
         name: "sustain",
-        pedalHeld: 0
+        pedalHeld: false
     },
     sostenuto: {
         name: "sostenuto",
-        pedalHeld: 0
+        pedalHeld: false
     },
     soft: {
         name: "soft",
-        pedalHeld: 0
+        pedalHeld: false
     }
 };
 
@@ -57,7 +57,7 @@ function actuatorMove(pedal, direction){
         (!(pedal.pedalHeld) && direction==="down") ||
         (pedal.pedalHeld && direction==="up")
     ){
-        throw "Error: {0} pedal already in {1} position".format(direction);
+        throw "Error: "+pedal.name+" pedal already in "+direction+" position";
     } else {
         var opts = {args: [pedal.name, direction]};
         PythonShell.run(driverPath, opts, function (err, results) {
@@ -65,5 +65,6 @@ function actuatorMove(pedal, direction){
             // results is an array consisting of messages collected during execution
             console.log('results: %j', results);
         });
+        pedal.pedalHeld = !pedal.pedalHeld;
     }
 }

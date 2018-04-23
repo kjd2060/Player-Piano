@@ -28,7 +28,7 @@ retract_time_sec = 0.750
 actuators = {
     "sustain": {
         "address": 0x60,  # first board, no solder jumpers
-        "channels":[1]  
+        "channels":[4]
         },
     "sostenuto": {
         "address": 0x60,  
