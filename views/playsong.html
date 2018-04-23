@@ -28,11 +28,7 @@
     </div>
     <div class="row">
         <div class="col-xs-2 col-xs-offset-2 text-center">
-<<<<<<< HEAD
             <button class="btn btn-primary btn-large btn-dropshadow" onclick="pause();">
-=======
-            <button class="btn btn-primary btn-large" onclick="pause();" hover="box-shadow:0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19)">
->>>>>>> c062c0f0328477b442bbedde1fcbc0dea2ff47a1
                 <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
             </button>
         </div>
@@ -53,11 +49,7 @@
         </div>
 		<div class="col-xs-8 col-xs-offset-2 text-center">
             <h3>Time:</h3>
-<<<<<<< HEAD
             <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="{{songEndSeconds}}" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b id="songEndTime">{{songEnd}}</b>
-=======
-            <b id="songCurrentTime">0:00&nbsp&nbsp</b><input id="time-slider" data-slider-id='time-data' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0" data-slider-handle="custom"/><b id="songEndTime">{{songEnd}}</b>
->>>>>>> c062c0f0328477b442bbedde1fcbc0dea2ff47a1
         </div>
     </div>
 </div>
@@ -137,7 +129,6 @@
     function myTimer(){
         var time = document.getElementById("songCurrentTime").innerHTML;
         var endTime = document.getElementById("songEndTime").innerHTML;
-<<<<<<< HEAD
         /*time = time.replace(/\D/g, '');
         endTime = endTime.replace(/\D/g, '');*/
         //time = time.replace('<!--0:00-->&nbsp;&nbsp;', '');
@@ -158,14 +149,6 @@
         var timeInt = parseInt(seconds);
         var endTimeInt = parseInt(endTimeSeconds);
         console.log("timeInt: " + timeInt + ", endTimeInt" + endTimeInt);
-=======
-        time = time.replace(/\D/g, '');
-        endTime = endTime.replace(/\D/g, '');
-        //time = time.replace('<!--0:00-->&nbsp;&nbsp;', '');
-        //console.log(time)
-        var timeInt = parseInt(time);
-        var endTimeInt = parseInt(endTime);
->>>>>>> c062c0f0328477b442bbedde1fcbc0dea2ff47a1
         if(timeInt < endTimeInt){
             timeInt += 1;
             var minutes = Math.floor(timeInt / 60);
@@ -174,10 +157,7 @@
             newtime = newtime + seconds;
             newtime = newtime + "&nbsp;&nbsp;";
             document.getElementById("songCurrentTime").innerHTML = newtime;
-<<<<<<< HEAD
             $("#time-slider").slider('setValue', timeInt);
-=======
->>>>>>> c062c0f0328477b442bbedde1fcbc0dea2ff47a1
         }
         //console.log(newtime);
     }
