@@ -213,24 +213,19 @@ app.get('/song', function(req, res) {
 
 // Playback controls for song (buttons) via post
 app.post('/start', function(req, res) {
-    var tempo = parseInt(req.body.tempo);
-    var startTime = req.body.startTime;
-    if (!tempo) {
-	    tempo = 120;
+    if (!midi.isPlaying()) {
+        var tempo = parseInt(req.body.tempo);
+        var startTime = parseInt(req.body.startTime);
+        if (!tempo) {
+            tempo = 120;
+        }
+        midi.startPlaying();
+        midi.playSong(database.getDB(), tempo, startTime);
     }
-    midi.playSong(database.getDB(),tempo,startTime);
-});
-
-app.post('/pause', function(req, res) {
-    piano.pause(function() {
-        res.send('success');
-    });
 });
 
 app.post('/stop', function(req, res) {
-    piano.stop(function() {
-        res.send('success');
-    });
+    midi.stopPlaying();
 });
 
 app.post('/updateTracks', function(req, res){

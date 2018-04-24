@@ -4,13 +4,18 @@
 module.exports = {
     velocityToDac: velocityToDac,
     transmitState: transmitState,
-    playSong: playSong
+    playSong: playSong,
+    isPlaying: isPlaying,
+    startPlaying: startPlaying,
+    stopPlaying: stopPlaying
 };
 var spi = require("./spicomm");
 //var pedal = require("./pedalcomm");
 var Loki = require("lokijs"); //TODO: extract my queries and put them in database.js, remove this import
 var database = require("./database");
 var gc = require("./globalConstants");
+
+var playing = false; // playback status variable
 
 const solenoid_on_time_limit = gc.solenoid_on_time_limit; // seconds the solenoid is allowed to be active for
 const minimum_cycle_duration = gc.minimum_cycle_duration_ms;
@@ -65,6 +70,7 @@ function playSong(db, userBPM, startTime){
     var currentSongData = currentSong.data()[0];
     var pianoState = db.getCollection("pianoState");
     spi.initSpi();
+    var bpmCorrection = 0.83;
 
     // If BPM is not provided, use the file's value for playback
     if (userBPM===null){
@@ -75,7 +81,7 @@ function playSong(db, userBPM, startTime){
     //   query this amount of time in the midi data (in seconds):
     var midiInterval = 60 / (currentSongData.bpm * currentSongData.PPQ);
     //   this is the real time duration of a pulse (in milliseconds):
-    var timerInterval = midiInterval * currentSongData.bpm / userBPM * 1000;
+    var timerInterval = midiInterval * currentSongData.bpm / userBPM * 1000 * bpmCorrection;
 
     // if we try to update faster than our spec allows, slow it down by half
     while (timerInterval < minimum_cycle_duration){
@@ -83,7 +89,7 @@ function playSong(db, userBPM, startTime){
         timerInterval *= 2;
     }
     // track progress in the song,
-    var songTime = 0;
+    var songTime = startTime;
 
     var currentNotes,key,note;
 
@@ -112,7 +118,7 @@ function playSong(db, userBPM, startTime){
         // increment timer to the next pulse
         songTime += midiInterval;
 
-        if(songTime > currentSongData.duration){ //TODO: also implement a "stop/pause" flag and check it here
+        if(songTime > currentSongData.duration || !playing){
             // song is over, turn off keys and quit looping
             spi.setKeyEnables([]);
             clearInterval(playLoop);
@@ -120,4 +126,17 @@ function playSong(db, userBPM, startTime){
         }
     }, timerInterval);
     //TODO: integrate pedal control in this loop
+}
+
+function isPlaying(){
+    //
+    return (playing && true);
+}
+
+function startPlaying(){
+    playing = true;
+}
+
+function stopPlaying(){
+    playing = false;
 }
