@@ -79,6 +79,30 @@
         // do math to figure out new time
         // startTimer();
     });
+
+    // when slider stops, restart the timer and play from the new time
+    $(document).ready(function() {
+        $('#time-slider').slider().on('slideStop', function(ev){
+            console.log("sliderstop");
+            play();
+        });
+    });
+
+    // when slider starts sliding, stop the timer and pause
+    $(document).ready(function() {
+        $('#time-slider').slider().on('slideStart', function(ev){
+            console.log("sliderstart");
+            pause();
+        });
+    });
+
+    $(document).ready(function() {
+        $('#time-slider').slider().on('slide', function(ev){
+            console.log("slide");
+            var timeVal = $('#time-slider').slider('getValue');
+            changeTimeDisplay(timeVal);
+        });
+    });    
 	
     function pause() {
         $.post('/stop', function(data) {
@@ -89,8 +113,9 @@
 
     function play() {
         var tempoMod = $('#BPM-field').val();
-        var startTimeMod = $('#time-slider').val();]
+        var startTimeMod = $('#time-slider').val();
         var fn = $('#fn').val();
+        console.log("startTime: " + startTimeMod);
         $.post('/start', {
                             tempo : tempoMod,
                             startTime : startTimeMod,
@@ -129,29 +154,40 @@
         }
     }
 
+    function changeTimeDisplay(timeInt){
+        var minutes = Math.floor(timeInt / 60);
+        seconds = timeInt - minutes * 60;
+        var newtime = "" + minutes + ":" + (seconds < 10 ? "0" : "");
+        newtime = newtime + seconds;
+        newtime = newtime + "&nbsp;&nbsp;";
+        document.getElementById("songCurrentTime").innerHTML = newtime;
+    }
+
     function myTimer(){
-        var time = document.getElementById("songCurrentTime").innerHTML;
+        var time = $("#time-slider").slider('getValue');
+        //var time = document.getElementById("songCurrentTime").innerHTML;
         var endTime = document.getElementById("songEndTime").innerHTML;
         /*time = time.replace(/\D/g, '');
         endTime = endTime.replace(/\D/g, '');*/
         //time = time.replace('<!--0:00-->&nbsp;&nbsp;', '');
-        var a = time.split(':'); // split it at the colons
+        //var a = time.split(':'); // split it at the colons
         var  b = endTime.split(':');
 
         //console.log(b);
-        a[0] = a[0].replace(/\D/g, '');
-        a[1] = a[1].replace(/\D/g, '');
+        //a[0] = a[0].replace(/\D/g, '');
+        //a[1] = a[1].replace(/\D/g, '');
         
         b[0] = b[0].replace(/\D/g, '');
         b[1] = b[1].replace(/\D/g, '');
         // minutes are worth 60 seconds. Hours are worth 60 minutes.
-        var seconds = (+a[0]) * 60 + (+a[1]);
+        //var seconds = (+a[0]) * 60 + (+a[1]);
+        var seconds = time;
         var endTimeSeconds = (+b[0]) * 60 + (+b[1]); 
         //console.log(seconds);
 
         var timeInt = parseInt(seconds);
         var endTimeInt = parseInt(endTimeSeconds);
-        console.log("timeInt: " + timeInt + ", endTimeInt" + endTimeInt);
+        //console.log("timeInt: " + timeInt + ", endTimeInt" + endTimeInt);
         if(timeInt < endTimeInt){
             timeInt += 1;
             var minutes = Math.floor(timeInt / 60);
