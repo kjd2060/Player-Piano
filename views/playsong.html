@@ -63,7 +63,7 @@
         <h3>Tracks to play:</h3>
     <ul style="list-style: none;"">
         {{#tracks}}
-            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);">&nbsp;{{trackName}}</li>
+            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);" {{#checked}}checked{{/checked}}>&nbsp; {{trackName}}</li>
         {{/tracks}}
     </ul>
 </div>

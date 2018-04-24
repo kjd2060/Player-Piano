@@ -148,7 +148,7 @@ app.get('/song', function(req, res) {
 
             var dbTracks = database.getTrackView();
 
-            var obj = []
+            var obj = [];
             for(var i = 0; i < dbTracks.length; i++){
                 var track = dbTracks[i];
                 //console.log(result[0].SongName);
@@ -157,10 +157,10 @@ app.get('/song', function(req, res) {
                     // do nothing
                 }
                 else if(!track.name){
-                    obj.push({trackName: track.instrument});
+                    obj.push({trackName: track.instrument, checked:track.checked});
                 }
                 else{
-                    obj.push({trackName: track.name});
+                    obj.push({trackName: track.name, checked:track.checked});
                 }
             }
 
@@ -183,7 +183,7 @@ app.get('/song', function(req, res) {
                     tracks:obj,
                     songEndSeconds:Math.floor(dur)
                 });
-                console.log("dur: " + Math.ceil(dur));
+                // console.log("dur: " + Math.ceil(dur));
 			}
 
             /*
@@ -240,7 +240,7 @@ app.post('/updateTracks', function(req, res){
             t.checked = true;
         }
     }
-})
+});
 
 var timer = setInterval(workWithTimer, 1000);
 

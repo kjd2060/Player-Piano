@@ -50,25 +50,31 @@ function addSong(songName, parsedMidi){
 	var header = parsedMidi.header;
 	var tempTracks = parsedMidi.tracks;
 	for(var i in tempTracks){
-		tracks.insert({
-			song:songName,
-			id : tempTracks[i].id,
-			name : tempTracks[i].name,
-			checked : false,
-			instrumentNumber : tempTracks[i].instrumentNumber,
-			instrumentFamily : tempTracks[i].instrumentFamily,
-			instrument : tempTracks[i].instrument });
+	    // only add the track if it is valid
+	    if (tempTracks[i].instrumentNumber >= 0  &&
+			tempTracks[i].length > 0
+		){
+            tracks.insert({
+                song:songName,
+                id : tempTracks[i].id,
+                name : tempTracks[i].name,
+                checked : (tempTracks[i].instrumentFamily === "piano"), // select by default if it's supposed to be piano
+                instrumentNumber : tempTracks[i].instrumentNumber,
+                instrumentFamily : tempTracks[i].instrumentFamily,
+                instrument : tempTracks[i].instrument });
 
-		for(var j in tempTracks[i].notes){
-			notes.insert({
-				song:songName,
-				trackID : tempTracks[i].id,
-				midi : tempTracks[i].notes[j].midi,
-				time : tempTracks[i].notes[j].time,
-				note : tempTracks[i].notes[j].note,
-				velocity : tempTracks[i].notes[j].velocity,
-				duration : tempTracks[i].notes[j].duration,
-				end : tempTracks[i].notes[j].time + tempTracks[i].notes[j].duration });
+            for(var j in tempTracks[i].notes) {
+                notes.insert({
+                    song: songName,
+                    trackID: tempTracks[i].id,
+                    midi: tempTracks[i].notes[j].midi,
+                    time: tempTracks[i].notes[j].time,
+                    note: tempTracks[i].notes[j].note,
+                    velocity: tempTracks[i].notes[j].velocity,
+                    duration: tempTracks[i].notes[j].duration,
+                    end: tempTracks[i].notes[j].time + tempTracks[i].notes[j].duration
+                });
+            }
 		}
 	}
 
