@@ -22,7 +22,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-6 col-xs-offset-3 text-center">
-            <h1>{{fn}}</h1>
+            <h1 id="fn">{{fn}}</h1>
 			<p hidden>{{fileName}}</p>
         </div>
     </div>
@@ -89,10 +89,12 @@
 
     function play() {
         var tempoMod = $('#BPM-field').val();
-        var startTimeMod = $('#time-slider').val();
+        var startTimeMod = $('#time-slider').val();]
+        var fn = $('#fn').val();
         $.post('/start', {
                             tempo : tempoMod,
-                            startTime : startTimeMod
+                            startTime : startTimeMod,
+                            fn, fn
                         }
         );
         startTimer();

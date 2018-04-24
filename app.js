@@ -216,11 +216,12 @@ app.post('/start', function(req, res) {
     if (!midi.isPlaying()) {
         var tempo = parseInt(req.body.tempo);
         var startTime = parseInt(req.body.startTime);
+        var fn = req.body.fn;
         if (!tempo) {
             tempo = 120;
         }
         midi.startPlaying();
-        midi.playSong(database.getDB(), tempo, startTime);
+        midi.playSong(database.getDB(), tempo, startTime, fn);
     }
 });
 
