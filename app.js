@@ -174,14 +174,14 @@ app.get('/song', function(req, res) {
 				});
 			}
 			else{
-				var durStr = ""+(Math.floor(dur/60)) + ":" + ((dur % 1)*60).toFixed(0);
+				var durStr = ""+(Math.floor(dur/60)) + ":" + ((dur % 60).toFixed(0));
 				res.render('playsong.html', {
 				    fn:req.query.fn,
                     fileName: filePath,
                     songEnd: durStr,
                     baseBPM:database.getCurrentSongBPM(),
                     tracks:obj,
-                    songEndSeconds:Math.ceil(dur)
+                    songEndSeconds:Math.floor(dur)
                 });
                 console.log("dur: " + Math.ceil(dur));
 			}
@@ -246,6 +246,7 @@ var timer = setInterval(workWithTimer, 1000);
 function workWithTimer(){
 
 }
+
 return app;
 
 };
