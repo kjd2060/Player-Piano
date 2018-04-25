@@ -5,15 +5,16 @@ module.exports = {
     velocityToDac: velocityToDac,
     transmitState: transmitState,
     playSong: playSong,
-    isPlaying: isPlaying,
-    startPlaying: startPlaying,
     stopPlaying: stopPlaying
 };
 var spi = require("./spicomm");
 //var pedal = require("./pedalcomm");
-var Loki = require("lokijs"); //TODO: extract my queries and put them in database.js, remove this import
+var Loki = require("lokijs");
 var database = require("./database");
 var gc = require("./globalConstants");
+var events = require('events');
+
+var eventEmitter = new events.EventEmitter();
 
 var playing = false; // playback status variable
 
@@ -66,13 +67,20 @@ function transmitState(db, currentTime){
 }
 
 function playSong(db, userBPM, startTime){
-    var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
-    var currentSongData = currentSong.data()[0];
+    // only play if we're not already playing
+    var l = eventEmitter.listeners('stopEvent');
+    if (l.length > 0){
+        return;
+    }
+
+    // get the song we want to play
+    var currentSong = database.getSongView();
+    var currentSongData = currentSong[currentSong.length-1]; // THIS IS DUCT TAPE
     var pianoState = db.getCollection("pianoState");
     spi.initSpi();
     var bpmCorrection = 0.83;
 
-    // If BPM is not provided, use the file's value for playback
+    // If altered BPM is not provided, use the file's value for playback
     if (userBPM===null){
         userBPM = currentSongData.bpm;
     }
@@ -92,10 +100,12 @@ function playSong(db, userBPM, startTime){
     var songTime = startTime;
 
     var currentNotes,key,note;
+    var songNotes = database.getSongNotes(currentSongData.name);
 
     var playLoop = setInterval(function(){
         // find all notes that should be on
-        currentNotes = database.getSongNotes(currentSongData.name).find({
+        currentNotes = songNotes.copy().find({ // copy that floppy;
+                                               // operating on the original Resultset clears it!
             $and:[
                 {time: {$lte: songTime}},
                 {end:{$gt:songTime}}
@@ -118,25 +128,24 @@ function playSong(db, userBPM, startTime){
         // increment timer to the next pulse
         songTime += midiInterval;
 
-        if(songTime > currentSongData.duration || !playing){
+        if(songTime > currentSongData.duration){
             // song is over, turn off keys and quit looping
-            spi.setKeyEnables([]);
-            clearInterval(playLoop);
-            spi.finishSpi();
+            eventEmitter.emit("stopEvent")
         }
     }, timerInterval);
     //TODO: integrate pedal control in this loop
-}
 
-function isPlaying(){
-    //
-    return (playing && true);
-}
-
-function startPlaying(){
-    playing = true;
+    // turn off keys and quit looping, triggered by stop buttons or end-of-song
+    function stopEvent(){
+        spi.setKeyEnables([]);
+        clearInterval(playLoop);
+        spi.finishSpi();
+        // we have stopped playing, stop listening until playSong is called again
+        eventEmitter.removeListener("stopEvent",stopEvent);
+    }
+    eventEmitter.addListener('stopEvent',stopEvent);
 }
 
 function stopPlaying(){
-    playing = false;
+    eventEmitter.emit("stopEvent");
 }

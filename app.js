@@ -213,20 +213,23 @@ app.get('/song', function(req, res) {
 
 // Playback controls for song (buttons) via post
 app.post('/start', function(req, res) {
-    if (!midi.isPlaying()) {
-        var tempo = parseInt(req.body.tempo);
-        var startTime = parseInt(req.body.startTime);
-        var fn = req.body.fn;
-        if (!tempo) {
-            tempo = 120;
-        }
-        midi.startPlaying();
-        midi.playSong(database.getDB(), tempo, startTime, fn);
+    // pass the config from the webpage into the play function
+    var tempo = parseInt(req.body.tempo);
+    var startTime = parseInt(req.body.startTime);
+    var fn = req.body.fn;
+    if (!tempo) {
+        tempo = 120;
     }
+    midi.playSong(database.getDB(), tempo, startTime, fn);
+    // end our POST so the browser won't wait or resend the request
+    res.end();
 });
 
 app.post('/stop', function(req, res) {
+    // trigger the midicomm stopEvent
     midi.stopPlaying();
+    // end our POST so the browser won't wait or resend the request
+    res.end()
 });
 
 app.post('/updateTracks', function(req, res){
@@ -240,6 +243,8 @@ app.post('/updateTracks', function(req, res){
             t.checked = true;
         }
     }
+    // end our POST so the browser won't wait or resend the request
+    res.end();
 });
 
 var timer = setInterval(workWithTimer, 1000);
