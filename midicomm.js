@@ -8,7 +8,7 @@ module.exports = {
     stopPlaying: stopPlaying
 };
 var spi = require("./spicomm");
-//var pedal = require("./pedalcomm");
+var pedal = require("./pedalcomm");
 var Loki = require("lokijs");
 var database = require("./database");
 var gc = require("./globalConstants");
@@ -98,12 +98,13 @@ function playSong(pianoState, userBPM, startTime){
     // track progress in the song,
     var songTime = startTime;
 
-    var currentNotes,key,note;
+    var currentNotes,key,note,currentPedalEvents,pedalToActuate;
     var songNotes = database.getSongNotes(currentSongData.name);
+    var pedalEvents = database.getSongControls(currentSongData.name);
 
     var playLoop = setInterval(function(){
         // find all notes that should be on
-        currentNotes = songNotes.copy().find({ // copy that floppy;
+        currentNotes = songNotes.copy().find({ // operate on a copy;
                                                // operating on the original Resultset clears it!
             $and:[
                 {time: {$lte: songTime}},
@@ -124,6 +125,37 @@ function playSong(pianoState, userBPM, startTime){
         // state is updated, now sync the hardware to it
         transmitState(pianoState,songTime);
 
+        // check for pedal events
+
+        currentPedalEvents = pedalEvents.copy().find({ // copy that floppy
+            time: {$between: [songTime+gc.pedalLookAheadTime, songTime+gc.pedalLookAheadTime+midiInterval]},
+            number: {$in:[64,66,67]}
+        }).data();
+        for (var e in currentPedalEvents){
+            switch (currentPedalEvents[e].number){
+                case 64:
+                    pedalToActuate = "sustain";
+                    break;
+/*          ***pedals not available in our system***
+                case 66:
+                    pedalToActuate = "soft";
+                    break;
+                case 67:
+                    pedalToActuate = "sostenuto";
+                    break;
+ */
+                default:
+                    // don't try to press a pedal we don't have
+                    continue;
+            }
+            // determine direction, and activate
+            if (currentPedalEvents[e].value){
+                pedal.pedalHold(pedalToActuate);
+            } else {
+                pedal.pedalRelease(pedalToActuate);
+            }
+        }
+
         // increment timer to the next pulse
         songTime += midiInterval;
 
@@ -139,6 +171,9 @@ function playSong(pianoState, userBPM, startTime){
         spi.setKeyEnables([]);
         clearInterval(playLoop);
         spi.finishSpi();
+        pedal.pedalRelease(pedal.pedals.sustain);
+        // pedal.pedalRelease(pedal.pedals.sostenuto);
+        // pedal.pedalRelease(pedal.pedals.soft);
         // we have stopped playing, stop listening until playSong is called again
         eventEmitter.removeListener("stopEvent",stopEvent);
     }

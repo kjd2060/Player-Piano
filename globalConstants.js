@@ -31,8 +31,11 @@ module.exports = {
     minimum_cycle_duration_ms : 10,  // the state of the piano can be reliably updated every 10ms
 
     // range of values for the 10-bit DAC at VREF=3.3V
-    minDacValue : 0,    // min value controls the loudest setting
-    maxDacValue : 80,   // max value controls the quietest setting
+    minDacValue : 60,    // min value controls the loudest setting
+    maxDacValue : 250,   // max value controls the quietest setting
+
+    // amount of delay between the pedal press command and full actuation (in seconds)
+    pedalLookAheadTime : 0, //0.5?
 
     /*** Functions ***/
     genCalMap : genCalMap
