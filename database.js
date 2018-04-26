@@ -1,3 +1,7 @@
+/// File: database.js
+/// Authors: Kevin Davison and Edward Maskelony
+/// Description: Database for use in the player piano application.  Uses lokijs to store information on songs, tracks, notes, and control signals.
+
 module.exports = {
 
 	addSong : addSong,
@@ -39,6 +43,9 @@ function getPianoState(){
     return db.getCollection("pianoState");
 }
 
+/// Add a song to the database.  Make sure that it isn't already in there, then add the track info for each track in the song, the note info from
+/// the notes in each track, and the song info itself.  Also, add control signal info.  Then setup the dynamic views for each table.
+/// @params: songName - the name of the song to add, parsedMidi - the midi that was parsed and contains info necessary to add the song
 function addSong(songName, parsedMidi){
 	results = songs.find({"name" : {'$eq' : songName}});
 	if(!results === undefined || !results.length == 0){
@@ -115,6 +122,8 @@ function addSong(songName, parsedMidi){
 	//console.log(controlView.data());
 }
 
+/// Prints the song out by it's song name.
+/// @param: songName - the name of the song to print
 function printSong(songName){
 	views["songView"].applyFind({'name': songName}, "printSongFind");
 	// console.log(views["songView"].data());
@@ -140,7 +149,9 @@ function getControlsView(){
  * INTERNAL FUNCTIONS
 */
 
-// ct has songName and trackIdentifier
+/// getSongNotes gets the notes from a specified song.  Iterates through the tracks in the song and grabs the notes relevant to that song only.
+/// @params songName - the name of the song to get notes for
+/// @note: ct has songName and trackIdentifier
 function getSongNotes(songName) {
 	// Obtain the tracks we care about, harvest their ID numbers
 	var allTracks = tracks.find({"song":songName, "checked":true});
@@ -156,6 +167,10 @@ function getSongNotes(songName) {
 	});
 }
 
+/// getSongControls gets the control signals from a specified song.  Iterates through the tracks in the song 
+/// and grabs the control signals relevant to that song only.
+/// @params songName - the name of the song to get notes for
+/// @note: ct has songName and trackIdentifier
 function getSongControls(songName){
 	// Obtain the tracks we care about, harvest their ID numbers
 	var allTracks = tracks.find({"song":songName, "checked":true});
@@ -179,9 +194,7 @@ function removeSong(songName){
 
 }
 
-/**
- * sets up the conditions of the piano hardware state
- */
+ /// initPianoState sets up the conditions of the piano hardware state
 function initPianoState() {
     var pianoState = db.getCollection("pianoState");
     var activeKeysView = pianoState.addDynamicView("activeKeys");
