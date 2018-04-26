@@ -205,7 +205,7 @@ function initPianoState() {
             velocityValue:1,
             velocityPrevious:-1,
             noteOn:false,
-            weightCal:calMap[i]
+            weightCal:calMap[i-midiStart]
         });
     }
     activeKeysView.applyFind({"noteOn":true});
