@@ -51,8 +51,8 @@ function addSong(songName, parsedMidi){
 	var tempTracks = parsedMidi.tracks;
 	for(var i in tempTracks){
 	    // only add the track if it is valid
-	    if (tempTracks[i].instrumentNumber >= 0  &&
-			tempTracks[i].length > 0
+	    if (tempTracks[i].length > 0 //&&
+			//tempTracks[i].instrumentNumber >= 0  
 		){
             tracks.insert({
                 song:songName,

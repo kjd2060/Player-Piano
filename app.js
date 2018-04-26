@@ -148,6 +148,7 @@ app.get('/song', function(req, res) {
 
             var dbTracks = database.getTrackView();
 
+            console.log("dbTracks.length: " + dbTracks.length);
             var obj = [];
             for(var i = 0; i < dbTracks.length; i++){
                 var track = dbTracks[i];
