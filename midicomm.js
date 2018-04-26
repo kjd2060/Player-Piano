@@ -134,14 +134,14 @@ function playSong(pianoState, userBPM, startTime){
         for (var e in currentPedalEvents){
             switch (currentPedalEvents[e].number){
                 case 64:
-                    pedalToActuate = "sustain";
+                    pedalToActuate = pedal.pedals.sustain;
                     break;
 /*          ***pedals not available in our system***
                 case 66:
-                    pedalToActuate = "soft";
+                    pedalToActuate = pedal.pedals.soft;
                     break;
                 case 67:
-                    pedalToActuate = "sostenuto";
+                    pedalToActuate = pedal.pedals.sostenuto;
                     break;
  */
                 default:
