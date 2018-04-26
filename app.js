@@ -153,11 +153,15 @@ app.get('/song', function(req, res) {
                 var track = dbTracks[i];
                 //console.log(result[0].SongName);
                 // || !(track.song.equals(results[0].SongName))
-                if((!track.name && !track.instrument)  || !(track.song === result[0].SongName)){
+                console.log(track.song);
+                if(!(track.song === result[0].SongName) || track.length <= 0){ //!track.name && !track.instrument)  || !(track.song === result[0].SongName)){
                     // do nothing
                 }
+                else if(!track.name && !track.instrument){
+                    obj.push({trackName: "untitled track", checked:track.checked});
+                }
                 else if(!track.name){
-                    obj.push({trackName: track.instrument, checked:track.checked});
+                	obj.push({trackName: track.instrument, checked:track.checked});
                 }
                 else{
                     obj.push({trackName: track.name, checked:track.checked});
