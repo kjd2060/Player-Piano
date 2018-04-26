@@ -60,12 +60,11 @@ function actuatorMove(pedal, direction){
         console.warn("Error: "+pedal.name+" pedal already in "+direction+" position");
     } else {
         var opts = {args: [pedal.name, direction]};
-        /*
         PythonShell.run(driverPath, opts, function (err, results) {
             if (err) throw err;
             // results is an array consisting of messages collected during execution
             //console.log('results: %j', results);
-        });*/
+        });
         pedal.pedalHeld = !pedal.pedalHeld;
     }
 }
