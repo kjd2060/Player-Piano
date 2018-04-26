@@ -130,7 +130,8 @@
             console.log(data);
         });
         stopTimer();
-        $("#time-slider").slider('setValue', 0)
+        document.getElementById("songCurrentTime").innerHTML = "0:00&nbsp;&nbsp;";
+        $("#time-slider").slider('setValue', 0);
     }
     function updateTracks(data){
         if(data.checked){
@@ -145,12 +146,15 @@
     var myVar = null;
     
     function startTimer(){
-        myVar = setInterval(myTimer, 1000);
+        if(myVar == null){
+            myVar = setInterval(myTimer, 1000);
+        }
     }
     
     function stopTimer(){
         if(myVar != null){
             clearInterval(myVar);
+            myVar = null;
         }
     }
 

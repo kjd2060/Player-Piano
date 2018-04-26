@@ -46,6 +46,7 @@ app.get('/', function(req, res) {
 		files = copy;
         res.render('list.html', {files:files});
     });
+    //res.end();
 });
 
 // Upload a song
@@ -112,6 +113,7 @@ app.get('/view', function(req, res) {
             res.status(500).send(err);
         }
     });
+    //res.end();
 });
 
 // Get a specified song, display UI controls for song after loading it in to piano
@@ -154,7 +156,7 @@ app.get('/song', function(req, res) {
                 var track = dbTracks[i];
                 //console.log(result[0].SongName);
                 // || !(track.song.equals(results[0].SongName))
-                console.log(track);
+                //console.log(track);
                 if(!(track.song === result[0].SongName) || track.length <= 0){ //!track.name && !track.instrument)  || !(track.song === result[0].SongName)){
                     // do nothing
                 }
@@ -167,6 +169,8 @@ app.get('/song', function(req, res) {
                 else{
                     obj.push({trackName: track.name, checked:track.checked, noteCount:track.length});
                 }
+                var controls = database.getControlsView();
+                //console.log(controls);
             }
 
 			if(pianoConnected){
@@ -214,6 +218,7 @@ app.get('/song', function(req, res) {
             res.status(500).send(err);
         }
     });
+    //res.end();
 });
 
 // Playback controls for song (buttons) via post
@@ -225,7 +230,7 @@ app.post('/start', function(req, res) {
     if (!tempo) {
         tempo = 120;
     }
-    midi.playSong(database.getDB(), tempo, startTime, fn);
+    midi.playSong(database.getPianoState(), tempo, startTime, fn);
     // end our POST so the browser won't wait or resend the request
     res.end();
 });

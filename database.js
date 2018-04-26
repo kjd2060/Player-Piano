@@ -6,9 +6,11 @@ module.exports = {
 	getSongView : getSongView,
 	getTrackView : getTrackView,
 	getNotesView : getNotesView,
-	getDB: getDB,
+	getControlsView : getControlsView,
+	getPianoState: getPianoState,
     getCurrentSongBPM: getCurrentSongBPM,
-    getSongNotes: getSongNotes
+    getSongNotes: getSongNotes,
+    getSongControls : getSongControls
 };
 
 var loki = require('lokijs');
@@ -21,6 +23,7 @@ var db = new loki("loki.json");
 var songs = db.addCollection("songs");
 var notes = db.addCollection("notes");
 var tracks = db.addCollection("tracks");
+var controlChanges = db.addCollection("controlChanges");
 var pianoState = db.addCollection("pianoState");
 initPianoState();
 var views = [];
@@ -32,8 +35,8 @@ var views = [];
 /**
  * make the database instance accessible to other functions
  */
-function getDB(){
-    return db;
+function getPianoState(){
+    return db.getCollection("pianoState");
 }
 
 function addSong(songName, parsedMidi){
@@ -77,6 +80,19 @@ function addSong(songName, parsedMidi){
                     end: tempTracks[i].notes[j].time + tempTracks[i].notes[j].duration
                 });
             }
+            for(var j in tempTracks[i].controlChanges){
+            	for(var k in tempTracks[i].controlChanges[j]){
+            		//console.log(tempTracks[i].controlChanges[j][k]);
+	            	controlChanges.insert({
+	            		song: songName,
+	            		trackID: tempTracks[i].id,
+	            		number: tempTracks[i].controlChanges[j][k].number,
+	            		time: tempTracks[i].controlChanges[j][k].time,
+	            		value: tempTracks[i].controlChanges[j][k].value
+            		});
+            	}
+            	
+            }
 		}
 	}
 
@@ -91,9 +107,12 @@ function addSong(songName, parsedMidi){
 	var songView = songs.addDynamicView("songView");
 	var tracksView = tracks.addDynamicView("tracksView");
 	var songNotes = notes.addDynamicView("songNotes");
+	var controlView = controlChanges.addDynamicView("controlChanges");
 	views["songView"] = songView;
 	views["tracksView"] = tracksView;
 	views["songNotes"] = songNotes;
+	views["controlChanges"] = controlView;
+	//console.log(controlView.data());
 }
 
 function printSong(songName){
@@ -112,6 +131,10 @@ function getTrackView(){
 
 function getNotesView(){
 	return views["songNotes"].data();
+}
+
+function getControlsView(){
+	return views["controlChanges"].data();
 }
 /*
  * INTERNAL FUNCTIONS
@@ -133,6 +156,20 @@ function getSongNotes(songName) {
 	});
 }
 
+function getSongControls(songName){
+	// Obtain the tracks we care about, harvest their ID numbers
+	var allTracks = tracks.find({"song":songName, "checked":true});
+	var idArray = [];
+	for(var t in allTracks){
+		idArray.push(allTracks[t].id);
+	}
+
+	// grab notes that are in our selected tracks
+	return controlChanges.chain().find({ // returns a Resultset for further queries
+		song: songName,
+		trackID:{$in : idArray}
+	});
+}
 function getCurrentSongBPM(){
     var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
     return Math.round(currentSong.data()[0].bpm);
