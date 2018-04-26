@@ -37,12 +37,12 @@ function velocityToDac(noteObj){
 
 /**
  * Communicates the state of the piano keys (on/off, velocity) to the hardware
- * @param {Loki} db - database containing the relation of the piano hardware state
+ * @param {Loki} pianoState - database containing the relation of the piano hardware state
  * @param {number} currentTime
  */
-function transmitState(db, currentTime){
+function transmitState(pianoState, currentTime){
     // Obtain the keys that should be on
-    var pianoActiveState = db.getCollection("pianoState").find({noteOn:true});
+    var pianoActiveState = pianoState.find({noteOn:true});
     var notesToEnable = [];
     var key = null;
     for (var k in pianoActiveState){ // for each key on the piano:
@@ -66,7 +66,7 @@ function transmitState(db, currentTime){
 
 }
 
-function playSong(db, userBPM, startTime){
+function playSong(pianoState, userBPM, startTime){
     // only play if we're not already playing
     var l = eventEmitter.listeners('stopEvent');
     if (l.length > 0){
@@ -76,7 +76,6 @@ function playSong(db, userBPM, startTime){
     // get the song we want to play
     var currentSong = database.getSongView();
     var currentSongData = currentSong[currentSong.length-1]; // THIS IS DUCT TAPE
-    var pianoState = db.getCollection("pianoState");
     spi.initSpi();
     var bpmCorrection = 0.83;
 
@@ -123,7 +122,7 @@ function playSong(db, userBPM, startTime){
             }
         }
         // state is updated, now sync the hardware to it
-        transmitState(db,songTime);
+        transmitState(pianoState,songTime);
 
         // increment timer to the next pulse
         songTime += midiInterval;
