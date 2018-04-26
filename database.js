@@ -51,6 +51,7 @@ function addSong(songName, parsedMidi){
 	var tempTracks = parsedMidi.tracks;
 	for(var i in tempTracks){
 	    // only add the track if it is valid
+	    //console.log(tempTracks[i]);
 	    if (tempTracks[i].length > 0 //&&
 			//tempTracks[i].instrumentNumber >= 0  
 		){
@@ -61,7 +62,8 @@ function addSong(songName, parsedMidi){
                 checked : (tempTracks[i].instrumentFamily === "piano"), // select by default if it's supposed to be piano
                 instrumentNumber : tempTracks[i].instrumentNumber,
                 instrumentFamily : tempTracks[i].instrumentFamily,
-                instrument : tempTracks[i].instrument });
+                instrument : tempTracks[i].instrument,
+                length: tempTracks[i].length });
 
             for(var j in tempTracks[i].notes) {
                 notes.insert({

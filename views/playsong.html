@@ -56,14 +56,14 @@
 <div>
     <!-- I can't remember why we were using this so I'm commenting it out since visually it's bad
         <img src="images/grand_staff.PNG" alt="Grand Staff -> Midi" style="vertical-align: middle"/>-->
-    <div class="col-xs-8 col-xs-offset-2 text-center" id="tracks_checkboxes">
+    <div class="col-xs-8 col-xs-offset-2" id="tracks_checkboxes">
         <br/>
         <br/>
         <br/>
         <h3>Tracks to play:</h3>
     <ul style="list-style: none;"">
         {{#tracks}}
-            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);" {{#checked}}checked{{/checked}}>&nbsp; {{trackName}}</li>
+            <li><input type="checkbox" value = "{{trackName}}" onclick="updateTracks(this);" {{#checked}}checked{{/checked}}>&nbsp; {{trackName}}&nbsp; (Note Count: {{noteCount}})</li>
         {{/tracks}}
     </ul>
 </div>

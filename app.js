@@ -148,24 +148,24 @@ app.get('/song', function(req, res) {
 
             var dbTracks = database.getTrackView();
 
-            console.log("dbTracks.length: " + dbTracks.length);
+            //console.log("dbTracks.length: " + dbTracks.length);
             var obj = [];
             for(var i = 0; i < dbTracks.length; i++){
                 var track = dbTracks[i];
                 //console.log(result[0].SongName);
                 // || !(track.song.equals(results[0].SongName))
-                console.log(track.song);
+                console.log(track);
                 if(!(track.song === result[0].SongName) || track.length <= 0){ //!track.name && !track.instrument)  || !(track.song === result[0].SongName)){
                     // do nothing
                 }
                 else if(!track.name && !track.instrument){
-                    obj.push({trackName: "untitled track", checked:track.checked});
+                    obj.push({trackName: "untitled track", checked:track.checked, noteCount:track.length});
                 }
                 else if(!track.name){
-                	obj.push({trackName: track.instrument, checked:track.checked});
+                	obj.push({trackName: track.instrument, checked:track.checked, noteCount:track.length});
                 }
                 else{
-                    obj.push({trackName: track.name, checked:track.checked});
+                    obj.push({trackName: track.name, checked:track.checked, noteCount:track.length});
                 }
             }
 
