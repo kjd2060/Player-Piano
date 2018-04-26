@@ -6,7 +6,7 @@ module.exports = {
 	getSongView : getSongView,
 	getTrackView : getTrackView,
 	getNotesView : getNotesView,
-	getDB: getDB,
+	getPianoState: getPianoState,
     getCurrentSongBPM: getCurrentSongBPM,
     getSongNotes: getSongNotes
 };
@@ -32,8 +32,8 @@ var views = [];
 /**
  * make the database instance accessible to other functions
  */
-function getDB(){
-    return db;
+function getPianoState(){
+    return db.getCollection("pianoState");
 }
 
 function addSong(songName, parsedMidi){

@@ -225,7 +225,7 @@ app.post('/start', function(req, res) {
     if (!tempo) {
         tempo = 120;
     }
-    midi.playSong(database.getDB(), tempo, startTime, fn);
+    midi.playSong(database.getPianoState(), tempo, startTime, fn);
     // end our POST so the browser won't wait or resend the request
     res.end();
 });
