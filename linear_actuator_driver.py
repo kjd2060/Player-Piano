@@ -19,8 +19,8 @@ from time import sleep
 
 debug = False
 default_freq = 1600
-extend_time_sec  = 0.750
-retract_time_sec = 0.750
+extend_time_sec  = 0.500
+retract_time_sec = 0.500
 
 
 # register the parameters of each pedal actuator channel here.
