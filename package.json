@@ -1,6 +1,7 @@
 {
   "name": "Player-Piano",
   "version": "2.0.0",
+  "repository": "https://github.com/kjd2060/Player-Piano.git",
   "description": "Controller and server for an automated piano",
   "main": "index.js",
   "scripts": {
