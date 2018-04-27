@@ -69,6 +69,7 @@
 </div>
 </div>
 <script>
+    var isPlaying = false;
 	$(document).ready(function() {
         $('#time-slider').slider({
             formatter: function(value) {
@@ -109,6 +110,7 @@
             console.log(data);
         });
         stopTimer();
+        isPlaying = false;
     }
 
     function play() {
@@ -123,6 +125,7 @@
                         }
         );
         startTimer();
+        isPlaying = true;
     }
 
     function stop() {
@@ -132,14 +135,19 @@
         stopTimer();
         document.getElementById("songCurrentTime").innerHTML = "0:00&nbsp;&nbsp;";
         $("#time-slider").slider('setValue', 0);
+        isPlaying = false;
     }
     function updateTracks(data){
             value = data.getAttribute("value");
             $.post('/updateTracks', {request_data : value}, function(data){
 
                 console.log(data);
-            })
-    }
+            });
+            if(isPlaying){
+                pause();
+                play();
+            }
+}
 
     var myVar = null;
     
