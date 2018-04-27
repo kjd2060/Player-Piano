@@ -13,7 +13,7 @@ var fs = require('fs');
 var database = require('./database');
 
 var midi = require("./midicomm");
-
+var loggedIn = false;
 var songs = [];
 var pianoConnected = false;
 module.exports = function(piano, midiProcessor) {
@@ -37,12 +37,6 @@ app.set('views', __dirname + '/views');
 /// Home directory - list out all possible files 
 /// @params: '/' - the home directory/page, req - the request information, res - the page to render
 app.get('/', function(req, res) {
-	/**/
-    res.render('login.html');
-    //res.end();
-});
-
-app.get('/list', function(req, res){
 	var copy = [];
 	var temp;
     // Get list of file names and pass to front end
@@ -59,7 +53,31 @@ app.get('/list', function(req, res){
 		files = copy;
         res.render('list.html', {files:files});
     });
+    //res.end();
 });
+
+/*
+app.get('/list', function(req, res){
+	if(!loggedIn){
+		res.render('login.html');
+	}
+	var copy = [];
+	var temp;
+    // Get list of file names and pass to front end
+    fs.readdir('midifiles/', function(err, files) {
+		files.forEach(function(file, index){
+		    // preserve intentional hyphens, e.g. 'artist - title'
+			temp = file.replace(/[ _]-[ _]/gi, ' ^ '); // hope ya'll know regex - learn it if you don't
+			temp = temp.replace(/[-_]/gi, ' ');
+			temp = temp.replace(/\^/gi, '-');
+			copy.push(temp.replace(/\.mid/i, ''));
+			songs.push({SongName: copy[index], FileName: file});
+		});
+		// delay until strings prettyfied
+		files = copy;
+        res.render('list.html', {files:files});
+    });
+});*/
 
 /// Upload a song
 app.post('/upload', function(req, res) {
@@ -167,10 +185,11 @@ app.get('/song', function(req, res) {
                     // do nothing
                 }
                 else if(!track.name && !track.instrument){
+                	track.name = "untitled track";
                 	track.instrument = "upright piano";
                 	if(!track.instrumentFamily)
                 		track.instrumentFamily = "piano";
-                    obj.push({trackName: "untitled track", checked:track.checked, noteCount:track.length});
+                    obj.push({trackName: track.name, checked:track.checked, noteCount:track.length});
                 }
                 else if(!track.name){
                 	obj.push({trackName: track.instrument, checked:track.checked, noteCount:track.length});
@@ -242,7 +261,9 @@ app.post('/updateTracks', function(req, res){
     // {request_data : trackName }
     for(var i = 0; i < trackView.length; i++){
         var t = trackView[i];
+        // console.log('name ' + t.name + ', instrument' + t.instrument);
         if((t.name === req.body.request_data) || (t.instrument === req.body.request_data)){
+        	console.log(t.name, t.instrument);
             t.checked = true;
         }
     }
@@ -250,18 +271,34 @@ app.post('/updateTracks', function(req, res){
     res.end();
 });
 
+/*
 app.post('/login', function(req, res){
 	var expectedUName = "admin";
 	var expectedPW = "narwhal1337";
 	if(req.body.username === expectedUName && req.body.password === expectedPW){
 		console.log("allow login");
-		req.loginSucess = true;
+		var copy = [];
+		var temp;
+	    // Get list of file names and pass to front end
+	    fs.readdir('midifiles/', function(err, files) {
+			files.forEach(function(file, index){
+			    // preserve intentional hyphens, e.g. 'artist - title'
+				temp = file.replace(/[ _]-[ _]/gi, ' ^ '); // hope ya'll know regex - learn it if you don't
+				temp = temp.replace(/[-_]/gi, ' ');
+				temp = temp.replace(/\^/gi, '-');
+				copy.push(temp.replace(/\.mid/i, ''));
+				songs.push({SongName: copy[index], FileName: file});
+			});
+			// delay until strings prettyfied
+			files = copy;
+	        res.render('list.html', {files:files});
+    	});
 	}
 	else{
 		console.log("Invalid login");
 		res.end();
 	}
-})
+});*/
 var timer = setInterval(workWithTimer, 1000);
 
 function workWithTimer(){
