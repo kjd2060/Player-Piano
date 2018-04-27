@@ -28,11 +28,11 @@ module.exports = {
     // Safety limits for solenoids
     max_powered_solenoids : 20, // maximum number of solenoids that can be active at once
     solenoid_on_time_limit : 8,  // seconds that the solenoid is allowed to be active for
-    minimum_cycle_duration_ms : 10,  // the state of the piano can be reliably updated every 10ms
+    minimum_cycle_duration_ms : 20,  // the state of the piano can be reliably updated every 10ms
 
     // range of values for the 10-bit DAC at VREF=3.3V
-    minDacValue : 60,    // min value controls the loudest setting
-    maxDacValue : 250,   // max value controls the quietest setting
+    minDacValue : 20,    // min value controls the loudest setting
+    maxDacValue : 180,   // max value controls the quietest setting
 
     // amount of delay between the pedal press command and full actuation (in seconds)
     pedalLookAheadTime : 0, //0.5?
@@ -91,9 +91,9 @@ function genCalMap(size){
             if (k <= 55) {
                 calMap[i] = 0;
             } else if (72 >= k && k > 55) {
-                calMap[i] = 20;
+                calMap[i] = 40;
             } else {
-                calMap[i] = 40
+                calMap[i] = 60
             }
         }
         else {
@@ -101,9 +101,9 @@ function genCalMap(size){
             if (k <=55 ){
                 calMap[i] = 0;
             } else if (72 >= k && k > 55){
-                calMap[i] = 20;
+                calMap[i] = 40;
             } else {
-                calMap[i] = 40
+                calMap[i] = 60
             }
         }
     }

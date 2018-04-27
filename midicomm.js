@@ -77,7 +77,7 @@ function playSong(pianoState, userBPM, startTime){
     var currentSong = database.getSongView();
     var currentSongData = currentSong[currentSong.length-1]; // THIS IS DUCT TAPE
     spi.initSpi();
-    var bpmCorrection = 0.83;
+    var bpmCorrection = 0.90;
 
     // If altered BPM is not provided, use the file's value for playback
     if (userBPM===null){
@@ -164,7 +164,6 @@ function playSong(pianoState, userBPM, startTime){
             eventEmitter.emit("stopEvent")
         }
     }, timerInterval);
-    //TODO: integrate pedal control in this loop
 
     // turn off keys and quit looping, triggered by stop buttons or end-of-song
     function stopEvent(){

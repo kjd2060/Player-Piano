@@ -186,8 +186,8 @@ function getSongControls(songName){
 	});
 }
 function getCurrentSongBPM(){
-    var currentSong = db.getCollection("songs").getDynamicView("songView").branchResultset();
-    return Math.round(currentSong.data()[0].bpm);
+    var currentSong = getSongView();
+    return Math.round(currentSong[currentSong.length-1].bpm);
 }
 
 function removeSong(songName){
