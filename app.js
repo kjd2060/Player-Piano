@@ -264,7 +264,12 @@ app.post('/updateTracks', function(req, res){
         // console.log('name ' + t.name + ', instrument' + t.instrument);
         if((t.name === req.body.request_data) || (t.instrument === req.body.request_data)){
         	console.log(t.name, t.instrument);
-            t.checked = true;
+            if(t.checked == true){
+            	t.checked = false;
+            }
+            else if(t.checked == false){
+            	t.checked = true;
+            }
         }
     }
     // end our POST so the browser won't wait or resend the request
