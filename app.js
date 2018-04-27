@@ -175,6 +175,8 @@ app.get('/song', function(req, res) {
 
             var dbTracks = database.getTrackView();
 
+            midi.setCurrentSongName(result[0].SongName);
+
             //console.log("dbTracks.length: " + dbTracks.length);
             var obj = [];
             // sets up the information for checking / unchecking tracks on the webpage which controls what tracks are played
