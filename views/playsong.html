@@ -70,6 +70,8 @@
 </div>
 <script>
     var isPlaying = false;
+    var originalTempo = {{baseBPM}};
+
 	$(document).ready(function() {
         $('#time-slider').slider({
             formatter: function(value) {
@@ -153,7 +155,10 @@
     
     function startTimer(){
         if(myVar == null){
-            myVar = setInterval(myTimer, 1000);
+            var tempoMod = (originalTempo) / ($('#BPM-field').val());
+            var baseSpeed = 1000; // 1 s
+            var speed = baseSpeed * tempoMod;
+            myVar = setInterval(myTimer, speed);
         }
     }
     
@@ -199,7 +204,11 @@
         var endTimeInt = parseInt(endTimeSeconds);
         //console.log("timeInt: " + timeInt + ", endTimeInt" + endTimeInt);
         if(timeInt < endTimeInt){
-            timeInt += 1;
+            var tempoMod = (originalTempo) / ($('#BPM-field').val());
+            var baseSpeed = 1; // 1 s
+            var speed = baseSpeed * tempoMod;
+
+            timeInt += speed;
             var minutes = Math.floor(timeInt / 60);
             seconds = timeInt - minutes * 60;
             var newtime = "" + minutes + ":" + (seconds < 10 ? "0" : "");
