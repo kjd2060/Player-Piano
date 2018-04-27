@@ -5,7 +5,8 @@ module.exports = {
     velocityToDac: velocityToDac,
     transmitState: transmitState,
     playSong: playSong,
-    stopPlaying: stopPlaying
+    stopPlaying: stopPlaying,
+    setCurrentSongName: setCurrentSongName
 };
 var spi = require("./spicomm");
 var pedal = require("./pedalcomm");
@@ -16,7 +17,7 @@ var events = require('events');
 
 var eventEmitter = new events.EventEmitter();
 
-var playing = false; // playback status variable
+var currentSongName = ""; // song to play
 
 const solenoid_on_time_limit = gc.solenoid_on_time_limit; // seconds the solenoid is allowed to be active for
 const minimum_cycle_duration = gc.minimum_cycle_duration_ms;
@@ -181,4 +182,8 @@ function playSong(pianoState, userBPM, startTime){
 
 function stopPlaying(){
     eventEmitter.emit("stopEvent");
+}
+
+function setCurrentSongName(songName){
+    currentSongName = songName;
 }
