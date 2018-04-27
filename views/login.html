@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Automated Piano</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/list.css">
+</head>
+<body>
+
+<h2>Please log in</h2>
+
+<label for="username"><b>Username</b></label>
+<input id="username" type="text" placeholder="Enter Username" name="username" required>
+
+<label for="password"><b>Password</b></label>
+<input id="password" type="password" placeholder="Enter Password" name="password" required>
+        
+<button type="submit" onclick="login();" >Login</button>
+</body>
+
+<script>
+function login(){
+	var username = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	console.log("UN: " + username + ", Pass: " + password);
+	$.post('/login', {username:username, password:password}, function(data){
+                //console.log(data);
+    });
+}
+</script>
+
+</body>

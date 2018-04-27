@@ -37,6 +37,12 @@ app.set('views', __dirname + '/views');
 /// Home directory - list out all possible files 
 /// @params: '/' - the home directory/page, req - the request information, res - the page to render
 app.get('/', function(req, res) {
+	/**/
+    res.render('login.html');
+    //res.end();
+});
+
+app.get('/list', function(req, res){
 	var copy = [];
 	var temp;
     // Get list of file names and pass to front end
@@ -53,7 +59,6 @@ app.get('/', function(req, res) {
 		files = copy;
         res.render('list.html', {files:files});
     });
-    //res.end();
 });
 
 /// Upload a song
@@ -162,6 +167,9 @@ app.get('/song', function(req, res) {
                     // do nothing
                 }
                 else if(!track.name && !track.instrument){
+                	track.instrument = "upright piano";
+                	if(!track.instrumentFamily)
+                		track.instrumentFamily = "piano";
                     obj.push({trackName: "untitled track", checked:track.checked, noteCount:track.length});
                 }
                 else if(!track.name){
@@ -242,6 +250,18 @@ app.post('/updateTracks', function(req, res){
     res.end();
 });
 
+app.post('/login', function(req, res){
+	var expectedUName = "admin";
+	var expectedPW = "narwhal1337";
+	if(req.body.username === expectedUName && req.body.password === expectedPW){
+		console.log("allow login");
+		req.loginSucess = true;
+	}
+	else{
+		console.log("Invalid login");
+		res.end();
+	}
+})
 var timer = setInterval(workWithTimer, 1000);
 
 function workWithTimer(){

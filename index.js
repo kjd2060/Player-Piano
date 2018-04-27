@@ -26,7 +26,7 @@ piano.initialize(function() {
 //testEndToEnd();
 //testPianoSerial();
 //testMidiValidity();
-
+/*
 function testPianoSerial() {
     // Setup the serial port connections
     piano.initialize(function() {
@@ -234,4 +234,4 @@ function testEndToEnd() {
         });
     });
 
-}
+}*/
