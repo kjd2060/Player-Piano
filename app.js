@@ -218,7 +218,7 @@ app.get('/song', function(req, res) {
 				    fn:req.query.fn,
                     fileName: filePath,
                     songEnd: durStr,
-                    baseBPM:database.getCurrentSongBPM(),
+                    baseBPM:database.getCurrentSongBPM(result[0].SongName),
                     tracks:obj,
                     songEndSeconds:Math.floor(dur)
                 });

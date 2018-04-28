@@ -185,9 +185,13 @@ function getSongControls(songName){
 		trackID:{$in : idArray}
 	});
 }
-function getCurrentSongBPM(){
-    var currentSong = getSongView();
-    return Math.round(currentSong[currentSong.length-1].bpm);
+function getCurrentSongBPM(songName){
+    var dbSongs = getSongView();
+    for(var i = 0; i < dbSongs.length; i++){
+        if (dbSongs[i].name === songName){
+            return Math.round(dbSongs[i].bpm);
+        }
+    }
 }
 
 function removeSong(songName){
