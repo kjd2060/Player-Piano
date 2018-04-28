@@ -75,8 +75,13 @@ function playSong(pianoState, userBPM, startTime){
     }
 
     // get the song we want to play
-    var currentSong = database.getSongView();
-    var currentSongData = currentSong[currentSong.length-1]; // THIS IS DUCT TAPE
+    var dbSongs = database.getSongView();
+    for(var i = 0; i < dbSongs.length; i++){
+        if (dbSongs[i].name === currentSongName){
+            var currentSongData = dbSongs[i];
+            break;
+        }
+    }
     spi.initSpi();
     var bpmCorrection = 0.90;
 
