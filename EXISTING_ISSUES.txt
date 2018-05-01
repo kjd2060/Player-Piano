@@ -1,0 +1,5 @@
+1) There is a bug where if you shut down the server (ctrl-c) while at a song page, then restart the server and reload the page, you'll probably get an error like "filename not defined" or osmething like that in the browser.  This is an existing issue that we never figured out how to fix.  To work around it, when you restart the server, make sure that you go to the home page first and hit reload (F5 or click it doesn't matter).  The alternative is to just retype "localhost:3000" or the IP/web address if you're accessing through the Pi server.
+
+2) The time display / slider doesn't scale based on tempo.
+
+3) 
